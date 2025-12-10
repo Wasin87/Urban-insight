@@ -70,7 +70,7 @@ const AboutUs = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              How Urban Insight Works
+              How Urban Insight Works? 
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               A streamlined process from issue identification to resolution
@@ -218,7 +218,7 @@ const AboutUs = () => {
               Meet the Developer
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              The visionary behind Urban Insight's innovative platform
+              The visionary behind Urban-Insight's innovative platform
             </p>
           </div>
 
@@ -250,7 +250,7 @@ const AboutUs = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                      <span className="text-gray-700 dark:text-gray-300">Specialized in Civic Tech Solutions</span>
+                      <span className="text-gray-700 dark:text-gray-300">Specialized in Urban-insight Tech Solutions</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
