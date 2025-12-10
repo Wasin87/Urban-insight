@@ -1,0 +1,98 @@
+[
+  {
+    "id": "66f47ac10b4f1c03e8c123456",
+    "user_email": "john.doe@example.com",
+    "userName": "John Doe",
+    "issue_category": "Broken Roads & Footpaths",
+    "ratings": 4.5,
+    "review": "Quick response from city maintenance team. The damaged road was repaired within two days.",
+    "issue_id": "URB-1001",
+    "report_zone": "Sector 12, Uttara",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/10.jpg",
+    "date": "2024-05-08T14:30:00.000Z"
+  },
+  {
+    "id": "66f47ac10b4f1c03e8c234567",
+    "user_email": "jane.smith@example.com",
+    "userName": "Jane Smith",
+    "issue_category": "Streetlight Malfunction",
+    "ratings": 3.8,
+    "review": "Streetlights were fixed, but took longer than expected. Area feels safer now.",
+    "issue_id": "URB-1002",
+    "report_zone": "Dhanmondi 7/A",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/25.jpg",
+    "date": "2024-06-10T10:15:00.000Z"
+  },
+  {
+    "id": "66f47ac10b4f1c03e8c345678",
+    "user_email": "alex.brown@example.com",
+    "userName": "Alex Brown",
+    "issue_category": "Garbage Dumping Spots",
+    "ratings": 5.0,
+    "review": "Excellent service! Garbage was removed quickly and area was sanitized properly.",
+    "issue_id": "URB-1003",
+    "report_zone": "Mirpur-2",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/34.jpg",
+    "date": "2024-07-01T08:50:00.000Z"
+  },
+  {
+    "id": "66f47ac10b4f1c03e8c456789",
+    "user_email": "lisa.white@example.com",
+    "userName": "Lisa White",
+    "issue_category": "Dangerous Intersections",
+    "ratings": 4.2,
+    "review": "Traffic police responded well and signals were fixed. Crossing feels safer now.",
+    "issue_id": "URB-1004",
+    "report_zone": "Banani Road 11",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/12.jpg",
+    "date": "2024-07-15T09:10:00.000Z"
+  },
+  {
+    "id": "66f47ac10b4f1c03e8c567890",
+    "user_email": "david.lee@example.com",
+    "userName": "David Lee",
+    "issue_category": "Waterlogging & Flood Spots",
+    "ratings": 2.9,
+    "review": "Very slow response. Water was removed after several hours. Needs improvement.",
+    "issue_id": "URB-1005",
+    "report_zone": "Motijheel Commercial Area",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/19.jpg",
+    "date": "2024-08-02T16:45:00.000Z"
+  },
+  {
+    "id": "66f47ac10b4f1c03e8c678901",
+    "user_email": "nina.khan@example.com",
+    "userName": "Nina Khan",
+    "issue_category": "Air Pollution Source Points",
+    "ratings": 4.9,
+    "review": "Authorities acted fast. Illegal burning was stopped, and fines were issued.",
+    "issue_id": "URB-1006",
+    "report_zone": "Tejgaon Industrial Area",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/8.jpg",
+    "date": "2024-08-10T12:00:00.000Z"
+  },
+  {
+    "id": "66f47ac10b4f1c03e8c789012",
+    "user_email": "michael.jordan@example.com",
+    "userName": "Michael Jordan",
+    "issue_category": "Electricity Outages Areas",
+    "ratings": 3.3,
+    "review": "Power came back but the issue repeats often. Long-term solution needed.",
+    "issue_id": "URB-1007",
+    "report_zone": "Bashundhara R/A",
+    "user_photoURL": "https://randomuser.me/api/portraits/men/22.jpg",
+    "date": "2024-08-14T18:20:00.000Z"
+  },
+  {
+    "id": "66f47ac10b4f1c03e8c890123",
+    "user_email": "emma.watson@example.com",
+    "userName": "Emma Watson",
+    "issue_category": "Mosquito Breeding Zones",
+    "ratings": 4.7,
+    "review": "Fast response! Fogging and cleanup reduced mosquito density significantly.",
+    "issue_id": "URB-1008",
+    "report_zone": "Gulshan-1",
+    "user_photoURL": "https://randomuser.me/api/portraits/women/5.jpg",
+    "date": "2024-08-20T07:30:00.000Z"
+  }
+]

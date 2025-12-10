@@ -1,0 +1,690 @@
+import React, { useState, useEffect } from "react";
+import { NavLink, Link, useLocation } from "react-router-dom";
+import { FaMoon, FaSun, FaBars, FaTimes, FaChevronDown, FaUser, FaCog, FaSignOutAlt, FaBell, FaSearch, FaHome, FaInfoCircle, FaMapMarkedAlt, FaClipboardList, FaTachometerAlt } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import Swal from "sweetalert2";
+import Logo from "../../../../components/Logo/Logo";
+import useAuth from "../../../../Hooks/useAuth";
+import useAxiosSecure from "../../../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { FaBoxTissue, FaCrown } from "react-icons/fa6";
+
+const Navbar = () => {
+  const { user, logOut } = useAuth();
+  const location = useLocation();
+  const axiosSecure = useAxiosSecure();
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "winter");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [scrolled, setScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+
+  // Fetch user premium status
+  const { data: userData, isLoading: userLoading } = useQuery({
+    queryKey: ['user', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      const res = await axiosSecure.get(`/users/${user.email}`);
+      return res.data;
+    },
+    enabled: !!user?.email
+  });
+
+  const isPremium = userData?.isPremium || false;
+
+  // Notifications mock data
+  const notifications = [
+    { id: 1, title: "Issue #1234 Resolved", message: "Pothole repair completed in Downtown", time: "5 min ago", read: false },
+    { id: 2, title: "New Comment", message: "Someone commented on your reported issue", time: "1 hour ago", read: false },
+    { id: 3, title: "Issue Assigned", message: "You've been assigned to verify a new issue", time: "3 hours ago", read: true },
+    { id: 4, title: "Welcome to Urban Insight", message: "Thank you for joining our community!", time: "1 day ago", read: true },
+  ];
+
+  // Theme management
+  useEffect(() => {
+    const html = document.documentElement;
+    html.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  // Scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Body overflow management
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [mobileMenuOpen]);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileDropdownOpen && !event.target.closest(".profile-dropdown")) {
+        setProfileDropdownOpen(false);
+      }
+      if (notificationsOpen && !event.target.closest(".notifications-dropdown")) {
+        setNotificationsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [profileDropdownOpen, notificationsOpen]);
+
+  const handleThemeToggle = () => {
+    setTheme(prev => (prev === "winter" ? "night" : "winter"));
+  };
+
+  const handleLogOut = () => {
+    Swal.fire({
+      title: "Sign Out?",
+      text: "Are you sure you want to sign out?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#f59e0b",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Sign Out",
+      cancelButtonText: "Cancel",
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logOut()
+          .then(() => {
+            Swal.fire({
+              title: "Signed Out!",
+              text: "You have successfully signed out.",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false,
+              background: theme === "night" ? "#1f2937" : "#ffffff",
+              color: theme === "night" ? "#ffffff" : "#111827",
+            });
+          })
+          .catch(() => {
+            Swal.fire({
+              title: "Error!",
+              text: "Something went wrong. Please try again.",
+              icon: "error",
+              background: theme === "night" ? "#1f2937" : "#ffffff",
+              color: theme === "night" ? "#ffffff" : "#111827",
+            });
+          });
+      }
+    });
+  };
+
+  const navLinkClass = ({ isActive }) =>
+    `relative px-3 py-2 font-medium transition-all duration-300 group ${
+      isActive
+        ? "text-amber-600 dark:text-amber-400"
+        : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
+    }`;
+
+  const links = [
+    { to: "/", label: "Home", icon: <FaHome className="" /> },
+    { to: "/allIssues", label: "All Issues", icon: <FaClipboardList className="" /> },
+    { 
+      label: "Services", 
+      icon: <FaCog className="w-4 h-4" />,
+      submenu: [
+        { to: "/addIssues", label: "Add Issues" },
+        { to: "/coverage", label: "Coverage Areas" },
+        { to: "/aboutUs", label: "About Us" },
+      ]
+    },
+    // { to: "/aboutUs", label: "About Us", icon: <FaInfoCircle className="w-4 h-4" /> },
+  ];
+ 
+  const userLinks = user ? [
+    { to: "/dashboard/myIssues", label: "My Issues", icon: <FaBoxTissue  className="w-4 h-4" /> },
+    { to: "/dashboard", label: "Dashboard", icon: <FaTachometerAlt className="w-4 h-4" /> },
+ 
+  ] : [];
+
+  return (
+    <>
+      {/* Navbar Container */}
+      <motion.nav 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        className={`fixed w-full top-0 left-0 z-50 transition-all duration-500 ${
+          scrolled 
+            ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-xl py-2" 
+            : "bg-linear-to-r from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-4"
+        }`}
+      >
+        <div className="  px-4 sm:px-6 lg:px-5">
+          <div className="flex justify-between items-center">
+            {/* Logo */}
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className=" "
+            >
+              <Link to="/" className="flex items-center space-x-2">
+                <Logo />
+              </Link>
+            </motion.div>
+
+            {/* Desktop Navigation Links */}
+            <div className="hidden lg:flex lg:items-center">
+              <ul className="flex items-center">
+                {links.map((link) => (
+                  <li key={link.label} className="relative">
+                    {link.submenu ? (
+                      <div 
+                        className="relative"
+                        onMouseEnter={() => setActiveDropdown(link.label)}
+                        onMouseLeave={() => setActiveDropdown(null)}
+                      >
+                        <button className={navLinkClass({ isActive: false })}>
+                          <span className="flex items-center ">
+                            {link.icon}
+                            <span>{link.label}</span>
+                            <FaChevronDown className={`w-3 h-3 transition-transform duration-200 ${
+                              activeDropdown === link.label ? "rotate-180" : ""
+                            }`} />
+                          </span>
+                        </button>
+                        
+                        <AnimatePresence>
+                          {activeDropdown === link.label && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 10 }}
+                              transition={{ duration: 0.2 }}
+                              className="absolute left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                            >
+                              {link.submenu.map((item) => (
+                                <NavLink
+                                  key={item.label}
+                                  to={item.to}
+                                  className={({ isActive }) => `block px-4 py-3 hover:bg-amber-50 dark:hover:bg-gray-700 transition-colors ${
+                                    isActive 
+                                      ? "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-gray-700" 
+                                      : "text-gray-700 dark:text-gray-300"
+                                  }`}
+                                >
+                                  {item.label}
+                                </NavLink>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ) : (
+                      <NavLink to={link.to} className={navLinkClass}>
+                        <span className="flex items-center space-x-2">
+                          {link.icon}
+                          <span>{link.label}</span>
+                        </span>
+                        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-amber-400 to-orange-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                      </NavLink>
+                    )}
+                  </li>
+                ))}
+                
+                {userLinks.map((link) => (
+                  <li key={link.label}>
+                    <NavLink to={link.to} className={navLinkClass}>
+                      <span className="flex items-center space-x-2">
+                        {link.icon}
+                        <span>{link.label}</span>
+                      </span>
+                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-amber-400 to-orange-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Right-side Actions */}
+            <div className="flex items-center space-x-2">
+              {/* Search Bar */}
+              <div className="relative">
+                <motion.div 
+                  animate={{ width: searchOpen ? "250px" : "40px" }}
+                  className="relative overflow-hidden"
+                >
+                  <input
+                    type="text"
+                    placeholder="Search issues..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={`w-full pl-12 pr-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-300 ${
+                      searchOpen ? "opacity-100" : "opacity-0 absolute"
+                    }`}
+                  />
+                  <button
+                    onClick={() => setSearchOpen(!searchOpen)}
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 text-gray-600 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                  >
+                    <FaSearch className="w-5 h-5" />
+                  </button>
+                </motion.div>
+              </div>
+
+              {/* Premium Badge (if premium user) */}
+              {user && isPremium && (
+                <div className="hidden md:flex items-center gap-1 px-3 py-1 bg-linear-to-r from-amber-500 to-yellow-500 text-white text-xs font-bold rounded-full">
+                  <FaCrown className="w-3 h-3" />
+                  <span>PREMIUM</span>
+                </div>
+              )}
+
+              {/* Notifications */}
+              {user && (
+                <div className="relative notifications-dropdown">
+                  <button
+                    onClick={() => {
+                      setNotificationsOpen(!notificationsOpen);
+                      setProfileDropdownOpen(false);
+                    }}
+                    className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <FaBell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                    {notifications.filter(n => !n.read).length > 0 && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {notificationsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                      >
+                        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                          <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {notifications.filter(n => !n.read).length} unread
+                          </span>
+                        </div>
+                        <div className="max-h-96 overflow-y-auto">
+                          {notifications.map((notification) => (
+                            <div
+                              key={notification.id}
+                              className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                                !notification.read ? "bg-amber-50/50 dark:bg-amber-900/20" : ""
+                              }`}
+                            >
+                              <h4 className="font-semibold text-gray-900 dark:text-white">
+                                {notification.title}
+                              </h4>
+                              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                {notification.message}
+                              </p>
+                              <span className="text-xs text-gray-500 dark:text-gray-400 mt-2 block">
+                                {notification.time}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="p-4 bg-gray-50 dark:bg-gray-900">
+                          <button className="text-sm text-amber-600 dark:text-amber-400 font-medium hover:underline">
+                            View all notifications
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Theme Toggle */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={handleThemeToggle}
+                className="p-2 rounded-full bg-linear-to-r from-amber-100 to-orange-100 dark:from-gray-800 dark:to-gray-700 shadow-sm hover:shadow-md transition-all duration-200"
+                aria-label="Toggle theme"
+              >
+                {theme === "night" ? (
+                  <FaSun className="w-5 h-5 text-amber-400 animate-spin-slow" />
+                ) : (
+                  <FaMoon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                )}
+              </motion.button>
+
+              {/* User Profile or Auth Buttons */}
+              {user ? (
+                <div className="relative profile-dropdown">
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setProfileDropdownOpen(!profileDropdownOpen);
+                      setNotificationsOpen(false);
+                    }}
+                    className="flex items-center space-x-3 focus:outline-none"
+                  >
+                    <div className="hidden md:block text-right">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {user.displayName || "User"}
+                      </p>
+                      {/* Premium Badge in user info */}
+ 
+                    </div>
+                    <div className="relative">
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-500 shadow-lg"
+                      >
+                        <img
+                          src={user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=amber-500&color=fff"}
+                          alt={user.displayName || "User"}
+                          className="w-full h-full object-cover"
+                        />
+                      </motion.div>
+                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800" />
+                    </div>
+                    <FaChevronDown className={`w-3 h-3 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
+                      profileDropdownOpen ? "rotate-180" : ""
+                    }`} />
+                  </motion.button>
+
+                  <AnimatePresence>
+                    {profileDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                      >
+                        <div className="p-4 bg-linear-to-r from-amber-500 to-orange-500 text-white">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
+                              <img
+                                src={user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=fff&color=000"}
+                                alt={user.displayName || "User"}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div>
+                              <h3 className="font-bold">{user.displayName}</h3>
+                              <p className="text-sm opacity-90">{user.email}</p>
+                              {isPremium && (
+                                <div className="flex items-center gap-1 mt-1">
+                                  <FaCrown className="w-3 h-3 text-yellow-300" />
+                                  <span className="text-xs font-bold">PREMIUM</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="py-2">
+                          <NavLink
+                            to="/dashboard"
+                            className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 transition-colors"
+                            onClick={() => setProfileDropdownOpen(false)}
+                          >
+                            <FaTachometerAlt className="w-4 h-4 mr-3 text-amber-500" />
+                            <span>Dashboard</span>
+                          </NavLink>
+
+                          {/* Premium Button - Only show if not premium */}
+                          {!isPremium && (
+                            <NavLink
+                              to="/premium"
+                              className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 transition-colors"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <FaCrown className="w-4 h-4 mr-3 text-amber-500" />
+                              <span>Go Premium</span>
+                            </NavLink>
+                          )}
+
+                          <button
+                            onClick={handleLogOut}
+                            className="flex items-center w-full px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-medium"
+                          >
+                            <FaSignOutAlt className="w-4 h-4 mr-3" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="hidden md:flex items-center space-x-3">
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 text-sm  border rounded-2xl bg-amber-500 dark:bg-amber-200  text-white dark:text-black font-bold hover:text-amber-900 dark:hover:text-amber-800 transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link
+                      to="/register"
+                      className="px-6 py-2.5 bg-linear-to-r from-amber-500 to-orange-500 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:from-amber-600 hover:to-orange-600"
+                    >
+                      Get Started
+                    </Link>
+                  </motion.div>
+                </div>
+              )}
+
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? (
+                  <FaTimes className="w-6 h-6 text-gray-900 dark:text-white" />
+                ) : (
+                  <FaBars className="w-6 h-6 text-gray-900 dark:text-white" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 z-50"
+            >
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              
+              {/* Menu Panel */}
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 25 }}
+                className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl"
+              >
+                <div className="p-6 h-full overflow-y-auto">
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-8">
+                    <Link to="/" className="flex items-center space-x-3" onClick={() => setMobileMenuOpen(false)}>
+                      <Logo />
+                    </Link>
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      <FaTimes className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                    </button>
+                  </div>
+
+                  {/* User Info */}
+                  {user && (
+                    <div className="mb-6 p-4 bg-linear-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-xl">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500">
+                          <img
+                            src={user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=amber-500&color=fff"}
+                            alt={user.displayName || "User"}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-gray-900 dark:text-white">{user.displayName}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
+                          {isPremium && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <FaCrown className="w-3 h-3 text-amber-500" />
+                              <span className="text-xs font-bold text-amber-600">Premium User</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mobile Links */}
+                  <ul className="space-y-1">
+                    {links.map((link) => (
+                      <li key={link.label}>
+                        {link.submenu ? (
+                          <>
+                            <div className="px-4 py-3 font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                              <span className="flex items-center space-x-3">
+                                {link.icon}
+                                <span>{link.label}</span>
+                              </span>
+                              <FaChevronDown className="w-3 h-3" />
+                            </div>
+                            <div className="pl-8 space-y-1">
+                              {link.submenu.map((item) => (
+                                <NavLink
+                                  key={item.label}
+                                  to={item.to}
+                                  className={({ isActive }) => `block px-4 py-2.5 rounded-lg ${
+                                    isActive 
+                                      ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-gray-800' 
+                                      : 'text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400'
+                                  }`}
+                                  onClick={() => setMobileMenuOpen(false)}
+                                >
+                                  {item.label}
+                                </NavLink>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <NavLink
+                            to={link.to}
+                            className={({ isActive }) => `flex items-center space-x-3 px-4 py-3 rounded-lg font-medium ${
+                              isActive 
+                                ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white' 
+                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                            }`}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {link.icon}
+                            <span>{link.label}</span>
+                          </NavLink>
+                        )}
+                      </li>
+                    ))}
+                    
+                    {userLinks.map((link) => (
+                      <li key={link.label}>
+                        <NavLink
+                          to={link.to}
+                          className={({ isActive }) => `flex items-center space-x-3 px-4 py-3 rounded-lg font-medium ${
+                            isActive 
+                              ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white' 
+                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                          }`}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {link.icon}
+                          <span>{link.label}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+
+                    {/* Premium Link for mobile */}
+                    {user && !isPremium && (
+                      <li>
+                        <NavLink
+                          to="/premium"
+                          className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium bg-linear-to-r from-amber-500 to-yellow-500 text-white"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <FaCrown className="w-4 h-4" />
+                          <span>Go Premium</span>
+                        </NavLink>
+                      </li>
+                    )}
+                  </ul>
+
+                  {/* Auth Buttons for Mobile */}
+                  {!user && (
+                    <div className="mt-8 space-y-3">
+                      <Link
+                        to="/login"
+                        className="block w-full px-4 py-3 text-center font-medium border rounded-2xl bg-amber-500 dark:bg-amber-200 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800  transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="block w-full px-4 py-3 bg-linear-to-r from-amber-500 to-orange-500 text-white font-medium rounded-lg text-center hover:from-amber-600 hover:to-orange-600 transition-all duration-300"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Create Account
+                      </Link>
+                    </div>
+                  )}
+
+                  {/* Logout Button */}
+                  {user && (
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogOut();
+                      }}
+                      className="w-full mt-8 px-4 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors flex items-center justify-center space-x-2"
+                    >
+                      <FaSignOutAlt className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+
+      {/* Spacer */}
+      <div className="h-16"></div>
+    </>
+  );
+};
+
+export default Navbar;
