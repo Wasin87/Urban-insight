@@ -250,7 +250,7 @@ const AboutUs = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                      <span className="text-gray-700 dark:text-gray-300">Specialized in Urban-insight Tech Solutions</span>
+                      <span className="text-gray-700 dark:text-gray-300">Specialized in Urban-insight Tech Solutions BD</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
@@ -271,7 +271,7 @@ const AboutUs = () => {
             Ready to Transform Your City?
           </h2>
           <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-            Join thousands of citizens already making their communities better through Urban Insight
+            Join thousands of citizens already making their communities better through Urban-Insight platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/addIssues" className="px-8 py-4 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl transition-colors duration-300 transform hover:scale-105">
