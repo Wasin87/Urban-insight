@@ -14,7 +14,7 @@ const Reviews = ({ reviewsPromise }) => {
           Review
         </h3>
         <p>
-   This is a system where citizens can report issues related to roads, lighting, sanitation, or other public facilities. Users can submit details along with images and location.
+   This is a system where citizens can report issues related to roads, lighting, sanitation, or other public facilities. Users can submit details along with images and location. Authorities can track and resolve the reported issues efficiently.
         </p>
       </div>
 
