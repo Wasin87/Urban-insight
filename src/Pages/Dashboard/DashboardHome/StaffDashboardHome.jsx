@@ -150,7 +150,7 @@ const StaffDashboardHome = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
             {/* Header */}
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -483,7 +483,7 @@ const StaffDashboardHome = () => {
                                         </div>
                                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                             <div 
-                                                className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full"
+                                                className="bg-linear-to-r from-blue-500 to-blue-600 h-2 rounded-full"
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>

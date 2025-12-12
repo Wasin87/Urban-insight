@@ -596,7 +596,7 @@ const UsersManagement = () => {
                                         </td>
                                         <td className="px-4 md:px-6 py-4">
                                             {isPremium ? (
-                                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-xs font-bold">
+                                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-yellow-500 to-amber-500 text-white text-xs font-bold">
                                                     <FaCrown className="w-3 h-3" />
                                                     PREMIUM
                                                 </span>

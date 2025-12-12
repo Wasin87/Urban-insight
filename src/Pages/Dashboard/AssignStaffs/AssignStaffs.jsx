@@ -257,7 +257,7 @@ const AssignStaffs = () => {
     }
 
     return (
-        <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300">
+        <div className="p-4 md:p-6 bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300">
             {/* Header Section */}
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -360,7 +360,7 @@ const AssignStaffs = () => {
 
             {/* Issues Table */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8 transition-colors duration-300 border dark:border-gray-700">
-                <div className="px-4 md:px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+                <div className="px-4 md:px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
                     <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Pending Issues for Assignment</h2>
                     <p className="text-gray-600 dark:text-gray-400 text-sm">Total: {filteredIssues.length} issues found</p>
                 </div>
@@ -477,7 +477,7 @@ const AssignStaffs = () => {
             <dialog ref={staffModalRef} className="modal modal-bottom sm:modal-middle">
                 <div className="modal-box max-w-6xl max-h-[90vh] overflow-hidden flex flex-col p-0 bg-white dark:bg-gray-800 transition-colors duration-300">
                     {/* Modal Header */}
-                    <div className="p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+                    <div className="p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div className="flex-1">
                                 <h3 className="font-bold text-xl md:text-2xl text-gray-900 dark:text-white mb-3">

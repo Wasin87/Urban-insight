@@ -225,20 +225,20 @@ const Service = () => {
 
     if (loading) {
         return (
-            <section className="px-4 py-16 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
+            <section className="px-4 py-16 bg-linear-to-r from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-10">
-                        <div className="inline-block animate-pulse h-12 w-64 bg-gradient-to-r from-amber-200 to-amber-300 dark:from-amber-600 dark:to-amber-700 rounded-lg mb-4"></div>
-                        <div className="inline-block animate-pulse h-4 w-96 bg-gradient-to-r from-amber-200 to-amber-300 dark:from-amber-600 dark:to-amber-700 rounded mx-auto"></div>
+                        <div className="inline-block animate-pulse h-12 w-64 bg-linear-to-r from-amber-200 to-amber-300 dark:from-amber-600 dark:to-amber-700 rounded-lg mb-4"></div>
+                        <div className="inline-block animate-pulse h-4 w-96 bg-linear-to-r from-amber-200 to-amber-300 dark:from-amber-600 dark:to-amber-700 rounded mx-auto"></div>
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[...Array(6)].map((_, index) => (
                             <div key={index} className="animate-pulse bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
-                                <div className="h-40 bg-gradient-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600"></div>
+                                <div className="h-40 bg-linear-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600"></div>
                                 <div className="p-6">
-                                    <div className="h-6 bg-gradient-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600 rounded mb-4"></div>
-                                    <div className="h-4 bg-gradient-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600 rounded mb-2"></div>
-                                    <div className="h-4 bg-gradient-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600 rounded mb-2"></div>
+                                    <div className="h-6 bg-linear-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600 rounded mb-4"></div>
+                                    <div className="h-4 bg-linear-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600 rounded mb-2"></div>
+                                    <div className="h-4 bg-linear-to-r from-amber-200 to-amber-300 dark:from-gray-700 dark:to-gray-600 rounded mb-2"></div>
                                 </div>
                             </div>
                         ))}
@@ -249,13 +249,13 @@ const Service = () => {
     }
 
     return (
-        <section className="px-4 py-16 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
+        <section className="px-4 py-16 bg-linear-to-r from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
             <ToastContainer position="top-right" autoClose={3000} />
             
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent mb-4">
                         Latest Community Issues
                     </h1>
                     <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
@@ -276,7 +276,7 @@ const Service = () => {
                         </p>
                         <button
                             onClick={() => navigate('/addIssues')}
-                            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+                            className="px-6 py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
                         >
                             Report New Issue
                         </button>
@@ -310,7 +310,7 @@ const Service = () => {
                                         </div>
                                         {issue.isBoosted && (
                                             <div className="absolute top-3 left-3">
-                                                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-500 to-amber-500 text-white">
+                                                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-linear-to-r from-yellow-500 to-amber-500 text-white">
                                                     ⚡ Boosted
                                                 </span>
                                             </div>
@@ -405,7 +405,7 @@ const Service = () => {
                                                             ? 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500 cursor-not-allowed'
                                                             : isUpvoted
                                                             ? 'bg-amber-100 text-amber-600 dark:bg-amber-900 dark:text-amber-300 cursor-default'
-                                                            : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md hover:shadow-lg transform hover:scale-105'
+                                                            : 'bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md hover:shadow-lg transform hover:scale-105'
                                                     }`}
                                                     title={isOwner ? "Can't upvote your own issue" : isUpvoted ? "Already upvoted" : "Upvote this issue"}
                                                 >
@@ -416,7 +416,7 @@ const Service = () => {
                                                 {/* View Details Button */}
                                                 <button
                                                     onClick={() => navigate(`/dashboard/issueDetails/${issue._id}`)}
-                                                    className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                                                    className="flex items-center gap-1 px-3 py-2 bg-linear-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                                                 >
                                                     <FaEye />
                                                     View
@@ -435,7 +435,7 @@ const Service = () => {
                     <div className="text-center mt-10">
                         <button
                             onClick={() => navigate('/allIssues')}
-                            className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                            className="px-8 py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                         >
                             View All Issues →
                         </button>

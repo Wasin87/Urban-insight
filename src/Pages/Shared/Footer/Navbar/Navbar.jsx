@@ -35,13 +35,150 @@ const Navbar = () => {
 
   const isPremium = userData?.isPremium || false;
 
-  // Notifications mock data
-  const notifications = [
-    { id: 1, title: "Issue #1234 Resolved", message: "Pothole repair completed in Downtown", time: "5 min ago", read: false },
-    { id: 2, title: "New Comment", message: "Someone commented on your reported issue", time: "1 hour ago", read: false },
-    { id: 3, title: "Issue Assigned", message: "You've been assigned to verify a new issue", time: "3 hours ago", read: true },
-    { id: 4, title: "Welcome to Urban Insight", message: "Thank you for joining our community!", time: "1 day ago", read: true },
-  ];
+  // Fetch user notifications from backend
+  const { data: notificationsData, refetch: refetchNotifications } = useQuery({
+    queryKey: ['notifications', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      try {
+        // First, get user's assigned issues (if staff)
+        let assignedIssues = [];
+        let userIssues = [];
+        
+        if (userData?.role === 'staff') {
+          const staffId = userData._id;
+          const res = await axiosSecure.get(`/staff/${staffId}/issues`);
+          assignedIssues = res.data.issues || [];
+        }
+
+        // Get user's own issues
+        const userIssuesRes = await axiosSecure.get(`/issues?email=${user.email}`);
+        userIssues = userIssuesRes.data || [];
+
+        // Generate notifications based on issues
+        const notifications = [];
+
+        // Notifications for staff
+        if (userData?.role === 'staff') {
+          // New assignments
+          const newAssignments = assignedIssues
+            .filter(issue => issue.status === 'assigned')
+            .map(issue => ({
+              id: issue._id,
+              type: 'assignment',
+              title: "New Issue Assigned",
+              message: `You've been assigned to: "${issue.issueTitle}"`,
+              time: new Date(issue.assignedAt).toLocaleDateString(),
+              read: false,
+              link: `/dashboard/staff/issues/${issue._id}`
+            }));
+
+          // Issues that need attention
+          const pendingIssues = assignedIssues
+            .filter(issue => issue.status === 'in-progress')
+            .map(issue => ({
+              id: issue._id,
+              type: 'reminder',
+              title: "Issue In Progress",
+              message: `"${issue.issueTitle}" is still in progress`,
+              time: new Date(issue.updatedAt).toLocaleDateString(),
+              read: false,
+              link: `/dashboard/staff/issues/${issue._id}`
+            }));
+
+          notifications.push(...newAssignments, ...pendingIssues);
+        }
+
+        // Notifications for issue owners
+        const userIssueNotifications = userIssues.map(issue => {
+          let notification = null;
+          
+          switch(issue.status) {
+            case 'assigned':
+              notification = {
+                id: issue._id,
+                type: 'assigned',
+                title: "Issue Assigned to Staff",
+                message: `Your issue "${issue.issueTitle}" has been assigned to staff`,
+                time: new Date(issue.assignedAt || issue.updatedAt).toLocaleDateString(),
+                read: false,
+                link: `/dashboard/myIssues/${issue._id}`
+              };
+              break;
+              
+            case 'in-progress':
+              notification = {
+                id: issue._id,
+                type: 'progress',
+                title: "Issue In Progress",
+                message: `Staff is working on your issue: "${issue.issueTitle}"`,
+                time: new Date(issue.updatedAt).toLocaleDateString(),
+                read: false,
+                link: `/dashboard/myIssues/${issue._id}`
+              };
+              break;
+              
+            case 'resolved':
+              notification = {
+                id: issue._id,
+                type: 'resolved',
+                title: "Issue Resolved!",
+                message: `Your issue "${issue.issueTitle}" has been resolved`,
+                time: new Date(issue.resolvedAt || issue.updatedAt).toLocaleDateString(),
+                read: false,
+                link: `/dashboard/myIssues/${issue._id}`
+              };
+              break;
+              
+            case 'rejected':
+              notification = {
+                id: issue._id,
+                type: 'rejected',
+                title: "Issue Rejected",
+                message: `Your issue "${issue.issueTitle}" has been rejected by staff`,
+                time: new Date(issue.rejectedAt || issue.updatedAt).toLocaleDateString(),
+                read: false,
+                link: `/dashboard/myIssues/${issue._id}`
+              };
+              break;
+          }
+          
+          return notification;
+        }).filter(n => n !== null);
+
+        notifications.push(...userIssueNotifications);
+
+        // Add welcome notification for new users
+        if (userData?.createdAt) {
+          const createdAt = new Date(userData.createdAt);
+          const daysSinceJoin = Math.floor((new Date() - createdAt) / (1000 * 60 * 60 * 24));
+          
+          if (daysSinceJoin < 7) {
+            notifications.unshift({
+              id: 'welcome',
+              type: 'welcome',
+              title: "Welcome to Urban Insight",
+              message: "Thank you for joining our community! Report issues, track progress, and help improve your city.",
+              time: "Just now",
+              read: false,
+              link: "/"
+            });
+          }
+        }
+
+        // Sort by time (newest first)
+        return notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        return [];
+      }
+    },
+    enabled: !!user?.email && !!userData,
+    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchOnWindowFocus: true
+  });
+
+  const notifications = notificationsData || [];
 
   // Theme management
   useEffect(() => {
@@ -89,6 +226,60 @@ const Navbar = () => {
     setTheme(prev => (prev === "winter" ? "night" : "winter"));
   };
 
+  const handleMarkAsRead = async (notificationId) => {
+    // Here you would typically send a request to mark notification as read
+    // For now, we'll just refetch notifications
+    await refetchNotifications();
+  };
+
+  const handleMarkAllAsRead = async () => {
+    // Here you would typically send a request to mark all notifications as read
+    // For now, we'll just refetch notifications
+    Swal.fire({
+      title: "Mark all as read?",
+      text: "Are you sure you want to mark all notifications as read?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#f59e0b",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, mark all",
+      cancelButtonText: "Cancel",
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        // API call to mark all as read would go here
+        await refetchNotifications();
+        Swal.fire({
+          title: "Done!",
+          text: "All notifications marked as read.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+          background: theme === "night" ? "#1f2937" : "#ffffff",
+          color: theme === "night" ? "#ffffff" : "#111827",
+        });
+      }
+    });
+  };
+
+  const getNotificationIcon = (type) => {
+    switch(type) {
+      case 'assignment':
+        return <FaUser className="w-4 h-4 text-blue-500" />;
+      case 'resolved':
+        return <FaCheck className="w-4 h-4 text-green-500" />;
+      case 'rejected':
+        return <FaTimes className="w-4 h-4 text-red-500" />;
+      case 'progress':
+        return <FaCog className="w-4 h-4 text-yellow-500" />;
+      case 'welcome':
+        return <FaInfoCircle className="w-4 h-4 text-amber-500" />;
+      default:
+        return <FaBell className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
   const handleLogOut = () => {
     Swal.fire({
       title: "Sign Out?",
@@ -100,7 +291,7 @@ const Navbar = () => {
       confirmButtonText: "Yes, Sign Out",
       cancelButtonText: "Cancel",
       background: theme === "night" ? "#1f2937" : "#ffffff",
-      color: theme === "night" ? "#ffffff" : "#111827",
+      color: theme === "night" ? "#111827" : "#111827",
     }).then((result) => {
       if (result.isConfirmed) {
         logOut()
@@ -147,13 +338,11 @@ const Navbar = () => {
         { to: "/aboutUs", label: "About Us" },
       ]
     },
-    // { to: "/aboutUs", label: "About Us", icon: <FaInfoCircle className="w-4 h-4" /> },
   ];
  
   const userLinks = user ? [
-    { to: "/dashboard/myIssues", label: "My Issues", icon: <FaBoxTissue  className="w-4 h-4" /> },
+    { to: "/dashboard/myIssues", label: "My Issues", icon: <FaBoxTissue className="w-4 h-4" /> },
     { to: "/dashboard", label: "Dashboard", icon: <FaTachometerAlt className="w-4 h-4" /> },
- 
   ] : [];
 
   return (
@@ -169,7 +358,7 @@ const Navbar = () => {
             : "bg-linear-to-r from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-4"
         }`}
       >
-        <div className="  px-4 sm:px-6 lg:px-5">
+        <div className="px-4 sm:px-6 lg:px-5">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <motion.div 
@@ -299,7 +488,7 @@ const Navbar = () => {
                     className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   >
                     <FaBell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    {notifications.filter(n => !n.read).length > 0 && (
+                    {notifications.length > 0 && (
                       <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                     )}
                   </button>
@@ -310,38 +499,96 @@ const Navbar = () => {
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                        className="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
                       >
-                        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                          <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {notifications.filter(n => !n.read).length} unread
-                          </span>
+                        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                          <div>
+                            <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {notifications.length} {notifications.length === 1 ? 'notification' : 'notifications'}
+                            </span>
+                          </div>
+                          {notifications.length > 0 && (
+                            <button
+                              onClick={handleMarkAllAsRead}
+                              className="text-xs text-amber-600 dark:text-amber-400 hover:underline"
+                            >
+                              Mark all as read
+                            </button>
+                          )}
                         </div>
                         <div className="max-h-96 overflow-y-auto">
-                          {notifications.map((notification) => (
-                            <div
-                              key={notification.id}
-                              className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                                !notification.read ? "bg-amber-50/50 dark:bg-amber-900/20" : ""
-                              }`}
-                            >
-                              <h4 className="font-semibold text-gray-900 dark:text-white">
-                                {notification.title}
-                              </h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                {notification.message}
+                          {notifications.length > 0 ? (
+                            notifications.map((notification) => (
+                              <Link
+                                key={notification.id}
+                                to={notification.link || "#"}
+                                onClick={() => {
+                                  handleMarkAsRead(notification.id);
+                                  setNotificationsOpen(false);
+                                }}
+                                className={`block p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                                  !notification.read ? "bg-amber-50/50 dark:bg-amber-900/20" : ""
+                                }`}
+                              >
+                                <div className="flex items-start space-x-3">
+                                  <div className="mt-1">
+                                    {getNotificationIcon(notification.type)}
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="flex justify-between items-start">
+                                      <h4 className="font-semibold text-gray-900 dark:text-white">
+                                        {notification.title}
+                                      </h4>
+                                      <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                        {notification.time}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                      {notification.message}
+                                    </p>
+                                    <div className="mt-2 flex items-center text-xs">
+                                      <span className={`px-2 py-1 rounded-full ${
+                                        notification.type === 'resolved' 
+                                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                          : notification.type === 'rejected'
+                                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                                          : notification.type === 'assignment'
+                                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                          : notification.type === 'progress'
+                                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                                      }`}>
+                                        {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
+                                      </span>
+                                      {!notification.read && (
+                                        <span className="ml-2 px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 rounded-full">
+                                          New
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </Link>
+                            ))
+                          ) : (
+                            <div className="p-8 text-center">
+                              <FaBell className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                              <p className="text-gray-500 dark:text-gray-400">No notifications yet</p>
+                              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                                You'll be notified about issue updates here
                               </p>
-                              <span className="text-xs text-gray-500 dark:text-gray-400 mt-2 block">
-                                {notification.time}
-                              </span>
                             </div>
-                          ))}
+                          )}
                         </div>
-                        <div className="p-4 bg-gray-50 dark:bg-gray-900">
-                          <button className="text-sm text-amber-600 dark:text-amber-400 font-medium hover:underline">
+                        <div className="p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                          <Link
+                            to="/dashboard/notifications"
+                            className="text-sm text-amber-600 dark:text-amber-400 font-medium hover:underline flex items-center justify-center"
+                            onClick={() => setNotificationsOpen(false)}
+                          >
                             View all notifications
-                          </button>
+                          </Link>
                         </div>
                       </motion.div>
                     )}
@@ -378,8 +625,9 @@ const Navbar = () => {
                       <p className="text-sm font-semibold text-gray-900 dark:text-white">
                         {user.displayName || "User"}
                       </p>
-                      {/* Premium Badge in user info */}
- 
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {userData?.role === 'staff' ? 'Staff Member' : userData?.role === 'admin' ? 'Admin' : 'User'}
+                      </p>
                     </div>
                     <div className="relative">
                       <motion.div
@@ -419,12 +667,23 @@ const Navbar = () => {
                             <div>
                               <h3 className="font-bold">{user.displayName}</h3>
                               <p className="text-sm opacity-90">{user.email}</p>
-                              {isPremium && (
-                                <div className="flex items-center gap-1 mt-1">
-                                  <FaCrown className="w-3 h-3 text-yellow-300" />
-                                  <span className="text-xs font-bold">PREMIUM</span>
-                                </div>
-                              )}
+                              <div className="flex items-center justify-between mt-1">
+                                {isPremium && (
+                                  <div className="flex items-center gap-1">
+                                    <FaCrown className="w-3 h-3 text-yellow-300" />
+                                    <span className="text-xs font-bold">PREMIUM</span>
+                                  </div>
+                                )}
+                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                  userData?.role === 'staff' 
+                                    ? 'bg-blue-500/20 text-blue-200'
+                                    : userData?.role === 'admin'
+                                    ? 'bg-red-500/20 text-red-200'
+                                    : 'bg-white/20 text-white'
+                                }`}>
+                                  {userData?.role?.toUpperCase() || 'USER'}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -437,6 +696,18 @@ const Navbar = () => {
                             <FaTachometerAlt className="w-4 h-4 mr-3 text-amber-500" />
                             <span>Dashboard</span>
                           </NavLink>
+
+                          {/* Show different links based on user role */}
+                          {userData?.role === 'staff' && (
+                            <NavLink
+                              to="/addIssues"
+                              className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 transition-colors"
+                              onClick={() => setProfileDropdownOpen(false)}
+                            >
+                              <FaClipboardList className="w-4 h-4 mr-3 text-blue-500" />
+                              <span>Assigned Issues</span>
+                            </NavLink>
+                          )}
 
                           {/* Premium Button - Only show if not premium */}
                           {!isPremium && (
@@ -551,12 +822,23 @@ const Navbar = () => {
                         <div>
                           <h3 className="font-bold text-gray-900 dark:text-white">{user.displayName}</h3>
                           <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
-                          {isPremium && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <FaCrown className="w-3 h-3 text-amber-500" />
-                              <span className="text-xs font-bold text-amber-600">Premium User</span>
-                            </div>
-                          )}
+                          <div className="flex items-center gap-2 mt-1">
+                            {isPremium && (
+                              <div className="flex items-center gap-1">
+                                <FaCrown className="w-3 h-3 text-amber-500" />
+                                <span className="text-xs font-bold text-amber-600">Premium</span>
+                              </div>
+                            )}
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              userData?.role === 'staff' 
+                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                : userData?.role === 'admin'
+                                ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            }`}>
+                              {userData?.role?.toUpperCase() || 'USER'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -625,6 +907,20 @@ const Navbar = () => {
                         </NavLink>
                       </li>
                     ))}
+
+                    {/* Staff links for mobile */}
+                    {user && userData?.role === 'staff' && (
+                      <li>
+                        <NavLink
+                          to="/addIssues"
+                          className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <FaClipboardList className="w-4 h-4" />
+                          <span>Assigned Issues</span>
+                        </NavLink>
+                      </li>
+                    )}
 
                     {/* Premium Link for mobile */}
                     {user && !isPremium && (

@@ -458,10 +458,10 @@ const AdminDashboardHome = () => {
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={revenueTrendData}>
                             <defs>
-                                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                <linearlinear id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
                                     <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
-                                </linearGradient>
+                                </linearlinear>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.1} />
                             <XAxis 
@@ -605,7 +605,7 @@ const AdminDashboardHome = () => {
             </div>
 
             {/* System Summary */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
+            <div className="bg-linear-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
                 <h3 className="text-xl font-semibold mb-4">System Performance Summary</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="text-center">
@@ -658,7 +658,7 @@ const AdminDashboardHome = () => {
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="avatar">
-                                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                                                    <div className="w-10 h-10 rounded-full bg-linear-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold">
                                                         {staff.displayName?.charAt(0) || staff.email?.charAt(0) || 'S'}
                                                     </div>
                                                 </div>
