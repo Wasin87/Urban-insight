@@ -7,7 +7,7 @@ const Footer = () => {
             <aside className='dark:text-white'>
                 <Logo />
                 <p className="font-bold">
-                    ACME Industries Ltd.
+                    Urban Insight Tech Ltd.
                     <br />
                     Providing reliable tech since 1992
                 </p>

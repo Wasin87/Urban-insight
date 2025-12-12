@@ -277,9 +277,9 @@ const AboutUs = () => {
             <Link to="/addIssues" className="px-8 py-4 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl transition-colors duration-300 transform hover:scale-105">
               Report an Issue Now
             </Link>
-            <button className="px-8 py-4 bg-transparent border-2 border-white/30 hover:border-white text-white font-semibold rounded-xl transition-all duration-300 hover:bg-white/10">
-              Learn How It Works
-            </button>
+            <Link to="/" className="px-8 py-4 bg-transparent border-2 border-white/30 hover:border-white text-white font-semibold rounded-xl transition-all duration-300 hover:bg-white/10">
+              Go to Home
+            </Link>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-800">
             <div className="flex flex-wrap items-center justify-center gap-8 text-gray-400">
