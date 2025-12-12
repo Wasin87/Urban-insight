@@ -31,26 +31,26 @@ const StaffDashboardHome = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    // Fetch staff's assigned issues
+   
     const { data: staffIssues = [], isLoading: issuesLoading } = useQuery({
         queryKey: ['staffIssues', user?.email],
         queryFn: async () => {
             if (!user?.email) return [];
             
-            // First get staff user to get their ID
+            
             const staffRes = await axiosSecure.get(`/users/${user.email}`);
             const staff = staffRes.data;
             
             if (!staff?._id) return [];
             
-            // Get issues assigned to this staff
+             
             const issuesRes = await axiosSecure.get(`/staff/${staff._id}/issues`);
             return issuesRes.data?.issues || [];
         },
         enabled: !!user?.email
     });
 
-    // Fetch all issues for statistics
+    
     const { data: allIssues = [], isLoading: allIssuesLoading } = useQuery({
         queryKey: ['allIssues'],
         queryFn: async () => {
@@ -59,7 +59,7 @@ const StaffDashboardHome = () => {
         }
     });
 
-    // Fetch users data
+     
     const { data: allUsers = [], isLoading: usersLoading } = useQuery({
         queryKey: ['allUsers'],
         queryFn: async () => {
@@ -68,19 +68,19 @@ const StaffDashboardHome = () => {
         }
     });
 
-    // Calculate statistics
+     
     const calculateStats = () => {
         const totalAssigned = staffIssues.length;
         const resolvedIssues = staffIssues.filter(issue => issue.status === 'resolved').length;
         const pendingIssues = staffIssues.filter(issue => issue.status === 'assigned' || issue.status === 'in-progress').length;
         
-        // Get unique users who submitted issues to this staff
+      
         const uniqueSubmitters = [...new Set(staffIssues.map(issue => issue.submittedBy))];
         
-        // Calculate success rate
+        
         const successRate = totalAssigned > 0 ? Math.round((resolvedIssues / totalAssigned) * 100) : 0;
         
-        // Get recent activities (last 5 issues)
+        
         const recentActivities = staffIssues
             .slice(0, 5)
             .map(issue => ({
@@ -98,7 +98,7 @@ const StaffDashboardHome = () => {
             uniqueSubmitters: uniqueSubmitters.length,
             successRate,
             recentActivities,
-            avgResolutionTime: '2.5 days' // This could be calculated from actual data
+            avgResolutionTime: '2.5 days'  
         };
     };
 
@@ -106,7 +106,7 @@ const StaffDashboardHome = () => {
 
     // Prepare data for charts
     const prepareChartData = () => {
-        // Issue status distribution for pie chart
+         
         const statusDistribution = {
             assigned: staffIssues.filter(i => i.status === 'assigned').length,
             'in-progress': staffIssues.filter(i => i.status === 'in-progress').length,
@@ -114,7 +114,7 @@ const StaffDashboardHome = () => {
             rejected: staffIssues.filter(i => i.status === 'rejected').length
         };
 
-        // Issues by district
+         
         const districtData = {};
         staffIssues.forEach(issue => {
             const district = issue.district || 'Unknown';
@@ -174,7 +174,7 @@ const StaffDashboardHome = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {/* Total Assigned Issues Card */}
+                 
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -196,7 +196,7 @@ const StaffDashboardHome = () => {
                     </div>
                 </motion.div>
 
-                {/* Resolved Issues Card */}
+                 
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -218,7 +218,7 @@ const StaffDashboardHome = () => {
                     </div>
                 </motion.div>
 
-                {/* Pending Issues Card */}
+               
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -265,7 +265,7 @@ const StaffDashboardHome = () => {
 
             {/* Charts and Detailed Info */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                {/* Issue Status Chart */}
+                 
                 <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">

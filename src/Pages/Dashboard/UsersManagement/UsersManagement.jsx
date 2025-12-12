@@ -67,9 +67,9 @@ const UsersManagement = () => {
 
     const roleStats = getRoleStats();
 
-    // ================================
+    
     // MAKE ADMIN
-    // ================================
+    
     const handleMakeAdmin = (user) => {
         Swal.fire({
             title: "Make Admin?",
@@ -113,9 +113,9 @@ const UsersManagement = () => {
         });
     };
 
-    // ================================
+     
     // MAKE STAFF
-    // ================================
+  
     const handleMakeStaff = (user) => {
         Swal.fire({
             title: "Make Staff?",
@@ -159,9 +159,9 @@ const UsersManagement = () => {
         });
     };
 
-    // ================================
+     
     // REMOVE ADMIN/STAFF (SET ROLE USER)
-    // ================================
+   
     const handleRemoveAdmin = (user) => {
         Swal.fire({
             title: "Remove Admin?",
@@ -205,9 +205,9 @@ const UsersManagement = () => {
         });
     };
 
-    // ================================
+    
     // REJECT USER
-    // ================================
+    
     const handleRejectUser = (user) => {
         Swal.fire({
             title: "Reject User?",
@@ -251,9 +251,9 @@ const UsersManagement = () => {
         });
     };
 
-    // ================================
+     
     // BLOCK USER
-    // ================================
+     
     const handleBlockUser = (user) => {
         Swal.fire({
             title: "Block User?",
@@ -297,9 +297,9 @@ const UsersManagement = () => {
         });
     };
 
-    // ================================
+   
     // APPROVE USER (Restore to user)
-    // ================================
+   
     const handleApproveUser = (user) => {
         Swal.fire({
             title: "Approve User?",

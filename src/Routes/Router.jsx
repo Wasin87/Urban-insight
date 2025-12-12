@@ -20,7 +20,7 @@ import AdminRoute from "./AdminRoute";
 import AssignStaffs from "../Pages/Dashboard/AssignStaffs/AssignStaffs";
 import StaffRoute from "./StaffRoute";
 import ManageIssues from "../Pages/Dashboard/ManageIssues/ManageIssues";
-import CompletedDeliveries from "../Pages/Dashboard/CompletedDeliveries/CompletedDeliveries";
+ 
  
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
  
@@ -135,10 +135,7 @@ import PremiumSuccess from "../Pages/Premium/PremiumSuccess";
          path:"manage-issues",
          element: <StaffRoute><ManageIssues></ManageIssues></StaffRoute>
        },
-       {
-         path:"completed-issues",
-         element: <StaffRoute><CompletedDeliveries></CompletedDeliveries></StaffRoute>
-       },
+ 
 
 
 

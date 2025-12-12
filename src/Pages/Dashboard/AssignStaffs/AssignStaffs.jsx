@@ -68,7 +68,7 @@ const AssignStaffs = () => {
                 const res = await axiosSecure.get('/users?role=staff');
                 const staffData = res.data || [];
                 
-                // Filter staff by availability and district if needed
+                 
                 const availableStaff = staffData.filter(staffMember => 
                     staffMember.status !== 'inactive' && 
                     (!selectedIssue?.district || staffMember.district === selectedIssue.district)
@@ -99,13 +99,13 @@ const AssignStaffs = () => {
         return matchesSearch && matchesDistrict && matchesType;
     });
 
-    // Get unique districts for filter
+    
     const uniqueDistricts = [...new Set(localIssues
         .map(issue => issue.district)
         .filter(Boolean)
         .sort())];
 
-    // Get unique issue types
+    
     const uniqueIssueTypes = [...new Set(localIssues
         .map(issue => issue.issueType)
         .filter(Boolean)
@@ -124,7 +124,7 @@ const AssignStaffs = () => {
         setSelectedIssue(null);
     };
 
-    // Toggle issue details
+    
     const toggleDetails = (issueId) => {
         setShowDetails(prev => ({
             ...prev,
@@ -132,7 +132,7 @@ const AssignStaffs = () => {
         }));
     };
 
-    // Assign Staff to Issue
+     
     const handleAssignStaff = async (staffMember) => {
         try {
             const staffAssignInfo = {
@@ -157,13 +157,13 @@ const AssignStaffs = () => {
             const result = await axiosSecure.patch(`/issues/${selectedIssue._id}/assign-staff`, staffAssignInfo);
 
             if (result.data.success) {
-                // Remove assigned staff from modal list
+                
                 setLocalStaff(prev => prev.filter(staff => staff._id !== staffMember._id));
                 
-                // Remove issue from local list
+                 
                 setLocalIssues(prev => prev.filter(issue => issue._id !== selectedIssue._id));
                 
-                // Close modal after successful assignment
+                 
                 setTimeout(() => {
                     closeModal();
                 }, 1000);
@@ -199,7 +199,7 @@ const AssignStaffs = () => {
                     timer: 5000
                 });
 
-                // Refetch issues to update the list
+                
                 refetchIssues();
             }
         } catch (error) {

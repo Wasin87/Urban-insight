@@ -291,7 +291,7 @@ const Navbar = () => {
       confirmButtonText: "Yes, Sign Out",
       cancelButtonText: "Cancel",
       background: theme === "night" ? "#1f2937" : "#ffffff",
-      color: theme === "night" ? "#111827" : "#111827",
+      color: theme === "night" ? "#ffffff" : "#111827",
     }).then((result) => {
       if (result.isConfirmed) {
         logOut()
@@ -302,7 +302,7 @@ const Navbar = () => {
               icon: "success",
               timer: 1500,
               showConfirmButton: false,
-              background: theme === "night" ? "#1f2937" : "#ffffff",
+              background: theme === "night" ? "#ffffff" : "#ffffff",
               color: theme === "night" ? "#ffffff" : "#111827",
             });
           })

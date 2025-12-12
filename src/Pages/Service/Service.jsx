@@ -20,16 +20,16 @@ const Service = () => {
         const fetchLatestIssues = async () => {
             try {
                 setLoading(true);
-                // Get all issues and sort by date to get latest
+                 
                 const res = await axiosSecure.get('/issues');
                 const allIssues = res.data || [];
                 
-                // Filter out resolved issues if you want, or show all
+               
                 const activeIssues = allIssues.filter(issue => 
                     issue.status !== 'resolved' && issue.status !== 'rejected'
                 );
                 
-                // Sort by createdAt (newest first) and take latest 6
+               
                 const sortedIssues = activeIssues
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     .slice(0, 6);
@@ -45,14 +45,14 @@ const Service = () => {
 
         fetchLatestIssues();
 
-        // Load previously upvoted issues from localStorage
+       
         const savedUpvotes = localStorage.getItem('upvotedIssues');
         if (savedUpvotes) {
             setUpvotedIssues(JSON.parse(savedUpvotes));
         }
     }, [axiosSecure]);
 
-    // Handle Upvote - Only non-owners can upvote
+    
     const handleUpvote = async (issue) => {
         // Check if user is logged in
         if (!user) {
@@ -63,7 +63,7 @@ const Service = () => {
             return;
         }
 
-        // Check if user is the owner of the issue
+        
         if (user.email === issue.submittedBy) {
             toast.info("You can't upvote your own issue!");
             return;
@@ -76,14 +76,14 @@ const Service = () => {
         }
 
         try {
-            // Add to local state
+            
             const newUpvotedIssues = [...upvotedIssues, issue._id];
             setUpvotedIssues(newUpvotedIssues);
             
-            // Save to localStorage
+           
             localStorage.setItem('upvotedIssues', JSON.stringify(newUpvotedIssues));
             
-            // Increment upvote count in backend
+             
             const updateData = {
                 upvotes: (issue.upvotes || 0) + 1,
                 upvotedBy: [...(issue.upvotedBy || []), user.email]
@@ -91,7 +91,7 @@ const Service = () => {
 
             await axiosSecure.patch(`/issues/${issue._id}`, updateData);
             
-            // Update local state
+           
             setIssues(prevIssues =>
                 prevIssues.map(item =>
                     item._id === issue._id
@@ -111,7 +111,7 @@ const Service = () => {
         }
     };
 
-    // Get status icon and color
+     
     const getStatusInfo = (status) => {
         switch (status?.toLowerCase()) {
             case 'pending':

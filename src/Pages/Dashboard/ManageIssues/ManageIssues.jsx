@@ -32,17 +32,17 @@ const ManageIssues = () => {
     queryFn: async () => {
       if (!user?.email) return [];
       
-      // First get staff user to get their ID
+       
       const staffRes = await axiosSecure.get(`/users/${user.email}`);
       const staff = staffRes.data;
       
       if (!staff?._id) return [];
       
-      // Get issues assigned to this staff
+      
       const issuesRes = await axiosSecure.get(`/staff/${staff._id}/issues`);
       const assignedIssues = issuesRes.data?.issues || [];
       
-      // Apply filters
+       
       let filteredIssues = assignedIssues;
       
       if (statusFilter !== 'all') {
@@ -66,7 +66,7 @@ const ManageIssues = () => {
     enabled: !!user?.email
   });
 
-  // Handle status update
+  
   const handleStatusUpdate = async (issueId, newStatus, issueTitle) => {
     try {
       const statusUpdate = {
@@ -74,7 +74,7 @@ const ManageIssues = () => {
         updatedAt: new Date().toISOString()
       };
 
-      // Show confirmation dialog
+       
       const result = await Swal.fire({
         title: `Update Status to ${newStatus}?`,
         html: `
@@ -111,7 +111,7 @@ const ManageIssues = () => {
         const response = await axiosSecure.patch(`/issues/${issueId}/status`, statusUpdate);
 
         if (response.data.success) {
-          // Refetch issues to update the list
+        
           refetch();
 
           Swal.fire({

@@ -139,7 +139,7 @@ const AdminDashboardHome = () => {
 
     // Prepare chart data from real data
     const prepareChartData = () => {
-        // Pie Chart Data for Issues Status
+        
         const pieChartData = [
             { name: 'Pending', value: stats.pendingIssues, color: '#FF6B6B' },
             { name: 'Assigned', value: stats.assignedIssues, color: '#4ECDC4' },
@@ -148,7 +148,7 @@ const AdminDashboardHome = () => {
             { name: 'Rejected', value: stats.rejectedIssues, color: '#EF476F' },
         ];
 
-        // Bar Chart Data for User Roles
+       
         const userRoleData = [
             { role: 'Users', count: stats.totalUsers - stats.totalAdmins - stats.totalStaff - stats.blockedUsers },
             { role: 'Admins', count: stats.totalAdmins },
@@ -157,14 +157,14 @@ const AdminDashboardHome = () => {
             { role: 'Blocked', count: stats.blockedUsers },
         ];
 
-        // Area Chart Data for Revenue Trend (last 30 days simulation)
+         
         const revenueTrendData = [];
         const today = new Date();
         for (let i = 29; i >= 0; i--) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
             
-            // Simulate revenue based on actual payments
+             
             const dayPayments = paymentsData.filter(p => {
                 const paymentDate = new Date(p.paidAt);
                 return paymentDate.toDateString() === date.toDateString();
@@ -354,7 +354,7 @@ const AdminDashboardHome = () => {
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Issues Status Pie Chart */}
+                 
                 <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
                         <FaChartLine />

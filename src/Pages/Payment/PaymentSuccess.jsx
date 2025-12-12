@@ -117,7 +117,7 @@ const PaymentSuccess = () => {
         try {
             const doc = new jsPDF();
             
-            // Add logo
+            //   logo
             doc.addImage(logo, 'PNG', 15, 10, 30, 30);
             
             // Company Info
