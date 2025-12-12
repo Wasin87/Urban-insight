@@ -47,7 +47,7 @@ const AboutUs = () => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Vision</h2>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                 To create smarter, more responsive urban environments where every citizen's voice contributes to 
-                 
+                sustainable city development and infrastructure improvement.
               </p>
             </div>
 
