@@ -8,6 +8,8 @@ import useAuth from "../../../../Hooks/useAuth";
 import useAxiosSecure from "../../../../Hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { FaBoxTissue, FaCrown } from "react-icons/fa6";
+import { FaCheck } from 'react-icons/fa';
+
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
