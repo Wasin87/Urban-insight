@@ -27,7 +27,7 @@ const AboutUs = () => {
             Urban <span className="text-amber-800 dark:text-amber-200">Insight</span>
           </h1>
           <p className="text-xl md:text-2xl font-light max-w-3xl mx-auto mb-10">
-            Bridging Communities and Government Through  
+            Bridging Communities and Government Through Transparent Infrastructure Reporting
           </p>
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
             <FaRocket className="text-amber-300" />
