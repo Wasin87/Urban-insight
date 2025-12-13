@@ -35,12 +35,12 @@ const Coverage = () => {
         <div className="py-10">
             {/* Title Section */}
             <div className="text-center mb-10 space-y-3">
-                <h2 className="text-5xl font-extrabold text-gray-800">
+                <h2 className="text-5xl font-extrabold text-gray-800 dark:text-white">
                     Nationwide Coverage Across <span className="text-secondary">64 Districts</span>
                 </h2>
                 <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                    We ensure fast, secure, and reliable delivery service across Bangladesh.  
-                    Explore our coverage areas and locate our nearest service centers.
+                  Urban Insight identifies key public infrastructure issues across Bangladesh using data-driven insights.
+                  It supports government actions for safer and more sustainable cities.
                 </p>
             </div>
 
