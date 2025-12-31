@@ -7,12 +7,13 @@ The system provides intelligent issue categorization, priority boosting, automat
 
 ---
 ## Website Screenshot: 
-<img width="1919" height="846" alt="image" src="https://github.com/user-attachments/assets/c3247915-2ce2-4eba-bc2e-fdfcc2d86a7a" />
-<img width="1915" height="882" alt="image" src="https://github.com/user-attachments/assets/38004132-faef-440c-b3da-2384f8805c64" />
-<img width="1918" height="878" alt="image" src="https://github.com/user-attachments/assets/52861f1c-94d3-4b0c-a3e4-82f86e98a625" />
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/c3247915-2ce2-4eba-bc2e-fdfcc2d86a7a" />
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/38004132-faef-440c-b3da-2384f8805c64" />
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/52861f1c-94d3-4b0c-a3e4-82f86e98a625" />
 
-<img width="1919" height="879" alt="image" src="https://github.com/user-attachments/assets/f4b60b7f-161b-4eb6-9771-b916d2970fc0" />
-<img width="1919" height="878" alt="image" src="https://github.com/user-attachments/assets/a44288ab-67fd-4368-8353-fe50a7addde3" />
+ <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/77887913-13f9-4bbd-a52f-ade9e6022dba" />
+
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/a44288ab-67fd-4368-8353-fe50a7addde3" />
 
 
 ## 🌐 Live Website
