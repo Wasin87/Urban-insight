@@ -7,18 +7,18 @@ The system provides intelligent issue categorization, priority boosting, automat
 
 ---
 ## Website Screenshot: 
-<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/c3247915-2ce2-4eba-bc2e-fdfcc2d86a7a" />
-<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/38004132-faef-440c-b3da-2384f8805c64" />
-<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/52861f1c-94d3-4b0c-a3e4-82f86e98a625" />
+<img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/c3247915-2ce2-4eba-bc2e-fdfcc2d86a7a" />
+<img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/38004132-faef-440c-b3da-2384f8805c64" />
+<img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/52861f1c-94d3-4b0c-a3e4-82f86e98a625" />
 
- <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/77887913-13f9-4bbd-a52f-ade9e6022dba" />
+ <img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/77887913-13f9-4bbd-a52f-ade9e6022dba" />
 
-<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/a44288ab-67fd-4368-8353-fe50a7addde3" />
+<img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/a44288ab-67fd-4368-8353-fe50a7addde3" />
 
 
 ## 🌐 Live Website
 
-* 🔗 **Live Client:** [https://zap-shift-44e49.web.app](https://zap-shift-44e49.web.app)
+* 🔗 **Live Link:** [https://zap-shift-44e49.web.app](https://zap-shift-44e49.web.app)
 * 🔗 **Live Server:** [https://urban-insight-server-side-api.vercel.app/issues](https://urban-insight-server-side-api.vercel.app/issues)
 
 ---
