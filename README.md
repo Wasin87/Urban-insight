@@ -1,197 +1,180 @@
-🚧 Urban Insight – AI Powered Infrastructure Issue Reporting System
+ 
+
+# 🚧 Urban Insight – AI Powered Infrastructure Issue Reporting System
 
 A modern, AI-enhanced full-stack web application that allows citizens to report and track public infrastructure issues such as damaged roads, streetlight failures, drainage problems, garbage overflow, etc.
 The system provides intelligent issue categorization, priority boosting, automated timelines, and role-based dashboards for admins, staff, and citizens.
 
-🌐 Live Website
+---
+## Website Screenshot: 
+<img width="1919" height="846" alt="image" src="https://github.com/user-attachments/assets/c3247915-2ce2-4eba-bc2e-fdfcc2d86a7a" />
+<img width="1915" height="882" alt="image" src="https://github.com/user-attachments/assets/38004132-faef-440c-b3da-2384f8805c64" />
+<img width="1918" height="878" alt="image" src="https://github.com/user-attachments/assets/52861f1c-94d3-4b0c-a3e4-82f86e98a625" />
 
-➡️ Live Client: Add link here
-➡️ Live Server: Add link here
+<img width="1919" height="879" alt="image" src="https://github.com/user-attachments/assets/f4b60b7f-161b-4eb6-9771-b916d2970fc0" />
+<img width="1919" height="878" alt="image" src="https://github.com/user-attachments/assets/a44288ab-67fd-4368-8353-fe50a7addde3" />
 
-👤 Credentials for Testing
-🔹 Admin Account
 
-Email: imran@ahmed.com
+## 🌐 Live Website
 
-Password: 1234A@g5678
+* 🔗 **Live Client:** [https://zap-shift-44e49.web.app](https://zap-shift-44e49.web.app)
+* 🔗 **Live Server:** [https://urban-insight-server-side-api.vercel.app/issues](https://urban-insight-server-side-api.vercel.app/issues)
 
-🔹 Staff Account
+---
 
-Email: rasel@ahmed.com
+## 👤 Credentials for Testing
 
-Password: 1234A@g5678
+### 🔹 Admin Account
 
-🔹 Citizen Account
+* **Email:** [imran@ahmed.com](mailto:imran@ahmed.com)
+* **Password:** 1234A@g5678
 
-Email: mamun@ahmed.com
+### 🔹 Staff Account
 
-Password: 1234A@g5678
+* **Email:** [rasel@ahmed.com](mailto:rasel@ahmed.com)
+* **Password:** 1234A@g5678
 
-✨ Key Features
-🏙️ Citizen Features
+### 🔹 Citizen Account
 
-Report public issues with photo + live location
+* **Email:** [mamun@ahmed.com](mailto:mamun@ahmed.com)
+* **Password:** 1234A@g5678
 
-Track issue lifecycle (Pending → In-Progress → Resolved → Closed)
+---
 
-Upvote issues (others’ issues only)
+## ✨ Key Features
 
-Edit/Delete own pending issues
+### 🏙️ Citizen Features
 
-Boost issue priority (payment)
+* Report public issues with photo + live location
+* Track issue lifecycle (Pending → In-Progress → Resolved → Closed)
+* Upvote issues (others’ issues only)
+* Edit/Delete own pending issues
+* Boost issue priority (payment)
+* Premium users get unlimited submissions
+* AI suggested issue categories (optional)
 
-Premium users get unlimited submissions
+---
 
-AI suggested issue categories (optional)
+### 🛠️ Staff Features
 
-🛠️ Staff Features
+* View admin-assigned issues
+* Update issue progress & change status
+* Add work logs with timestamps
+* Dashboard analytics
+* Update own profile
 
-View admin-assigned issues
+---
 
-Update issue progress & change status
+### 🛡️ Admin Features
 
-Add work logs with timestamps
+* Manage all public issues
+* Assign issues to staff
+* Reject issues
+* Manage citizens (Block/Unblock)
+* Manage staff (Add/Update/Delete)
+* Manage payments & invoices
+* Role-based protected dashboards
+* Advanced search, filters & pagination
 
-Dashboard analytics
+---
 
-Update own profile
+## 🌟 System-Level Features
 
-🛡️ Admin Features
+* Fully responsive design
+* Firebase authentication
+* JWT secured backend
+* TanStack Query for fast data loading
+* SweetAlert / Toast notifications
+* Priority-based issue listing
+* Real-time history timelines
+* Clean UI/UX (no lorem ipsum)
 
-Manage all public issues
+---
 
-Assign issues to staff
+## 🧩 How the System Works
 
-Reject issues
+1. Citizens report an issue with details + image + location
+2. AI suggests category and priority (optional)
+3. Admin verifies and assigns the issue to staff
+4. Staff updates progress
+5. System logs all activities in timeline
+6. Citizen receives instant updates
+7. Priority issues appear at the top
 
-Manage citizens (Block/Unblock)
+---
 
-Manage staff (Add/Update/Delete)
+## 🧩 Technology Stack
 
-Manage payments & invoices
+### 🎨 Frontend
 
-Role-based protected dashboards
+* React.js
+* TailwindCSS + DaisyUI
+* React Hook Form
+* TanStack Query
+* Axios
+* SweetAlert2 / Toast
 
-Advanced search, filters & pagination
+### ⚙️ Backend
 
-🌟 System-Level Features
+* Node.js
+* Express.js
+* MongoDB
+* JWT Authentication
+* Stripe Payment
 
-Fully responsive design
+### 🔐 Additional Services
 
-Firebase authentication
+* Firebase Authentication
+* imgbb Image Hosting
 
-JWT secured backend
+---
 
-TanStack Query for fast data loading
+## 📊 Dashboard Overview
 
-SweetAlert / Toast notifications
+### 👤 Citizen Dashboard
 
-Priority-based issue listing
+* Issue counts
+* Payment history
+* Chart analytics
+* Status summary
 
-Real-time history timelines
+### 🛠️ Staff Dashboard
 
-Clean UI/UX (no lorem ipsum)
+* Assigned issues overview
+* Today's tasks
+* Status analytics
+* Progress log filtering
 
-🧩 How the System Works
+### 🛡️ Admin Dashboard
 
-Citizens report an issue with details + image + location
+* Total issues
+* Payment stats
+* User & staff management
+* Realtime insights
+* Priority-based monitoring
 
-AI suggests category and priority (optional)
+---
 
-Admin verifies and assigns the issue to staff
+## 🧾 Payments System
 
-Staff updates progress
+### 💳 Two Payment Services
 
-System logs all activities in timeline
+* **Priority Boost:** 100৳
+* **Premium Subscription:** 1000৳ (Unlimited reports)
 
-Citizen receives instant updates
+### 📌 Includes
 
-Priority issues appear at the top
+* Payment history
+* PDF invoice generation
+* Realtime updates
 
-🧩 Technology Stack
-Frontend
+---
 
-React.js
+## 📁 Project Structure
 
-TailwindCSS + DaisyUI
+### 🖥️ Client
 
-React Hook Form
-
-TanStack Query
-
-Axios
-
-SweetAlert2 / Toast
-
-Backend
-
-Node.js
-
-Express.js
-
-MongoDB
-
-JWT Auth
-
-Stripe Payment
-
-Additional
-
-Firebase Auth
-
-imgbb Image Hosting
-
-📊 Dashboard Overview
-Citizen Dashboard
-
-Issue counts
-
-Payment history
-
-Chart analytics
-
-Status summary
-
-Staff Dashboard
-
-Assigned issues overview
-
-Today's tasks
-
-Status analytics
-
-Progress log filtering
-
-Admin Dashboard
-
-Total issues
-
-Payment stats
-
-User/staff management
-
-Realtime insights
-
-Priority-based monitoring
-
-🧾 Payments System
-
-Two payment services:
-
-Priority Boost – 100৳
-
-Premium Subscription – 1000৳ (unlimited reports)
-
-Includes:
-
-Payment history
-
-PDF invoice generation
-
-Realtime updates
-
-📁 Project Structure
-Client
+```
 src/
  ├── components/
  ├── hooks/
@@ -200,9 +183,12 @@ src/
  ├── routes/
  ├── context/
  ├── utils/
- └── styles/
+ ├── styles/
+```
 
-Server
+### 🌐 Server
+
+```
 server/
  ├── routes/
  ├── controllers/
@@ -211,41 +197,71 @@ server/
  ├── config/
  ├── utils/
  └── index.js
+```
 
-🚀 Installation Guide
-1️⃣ Clone Repositories
+---
+
+## 🚀 Installation Guide
+
+### 1️⃣ Clone Repositories
+
+```bash
 git clone <client-repo>
 git clone <server-repo>
+```
 
-2️⃣ Install Dependencies
+---
 
-Client
+### 2️⃣ Install Dependencies
 
+#### Client
+
+```bash
 npm install
+```
 
+#### Server
 
-Server
-
+```bash
 npm install
+```
 
-3️⃣ Environment Variables
-Client .env
+---
+
+### 3️⃣ Environment Variables
+
+#### Client `.env`
+
+```env
 VITE_api_url=YOUR_SERVER_URL
 VITE_FIREBASE_API_KEY=
 VITE_image_host_KEY=
+```
 
-Server .env
+#### Server `.env`
+
+```env
 DB_URI=
 JWT_SECRET=
 STRIPE_SECRET=
+```
 
-▶️ Run the Project
-Client
+---
+
+### ▶️ Run the Project
+
+#### Client
+
+```bash
 npm run dev
+```
 
-Server
+#### Server
+
+```bash
 nodemon index.js
+```
 
-📝 License
+---
 
-Created for academic & development use only.
+ 
