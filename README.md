@@ -1,8 +1,8 @@
  
 
-# 🚧 Urban Insight – AI Powered Infrastructure Issue Reporting System
+# 🚧 Urban Insight – Infrastructure Issue Reporting System
 
-A modern, AI-enhanced full-stack web application that allows citizens to report and track public infrastructure issues such as damaged roads, streetlight failures, drainage problems, garbage overflow, etc.
+A modern full-stack web application that allows citizens to report and track public infrastructure issues such as damaged roads, streetlight failures, drainage problems, garbage overflow, etc.
 The system provides intelligent issue categorization, priority boosting, automated timelines, and role-based dashboards for admins, staff, and citizens.
 
 ---
