@@ -776,7 +776,7 @@ const getUserRole = () => {
                     <div className="relative">
                       <motion.div
                         whileHover={{ scale: 1.1 }}
-                        className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-500 shadow-lg"
+                        className="w-8 h-8 rounded-full flex   overflow-hidden border-2 border-amber-500 shadow-lg"
                       >
                         <img
                           src={user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=amber-500&color=fff"}
@@ -786,9 +786,7 @@ const getUserRole = () => {
                       </motion.div>
                       <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800" />
                     </div>
-                    <FaChevronDown className={`w-3 h-3 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
-                      profileDropdownOpen ? "rotate-180" : ""
-                    }`} />
+ 
                   </motion.button>
 
                   <AnimatePresence>
@@ -904,13 +902,13 @@ const getUserRole = () => {
 {/* Mobile Menu Toggle */}
 <button
   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-  className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+  className="lg:hidden  rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
   aria-label="Toggle menu"
 >
   {mobileMenuOpen ? (
     <FaTimes className="w-6 h-6 text-gray-900 dark:text-white" />
   ) : (
-    <FaBars className="w-4 h-4 mr-10 text-gray-900 dark:text-white" />
+    <FaBars className="w-4 h-4 mr-10  text-gray-900 dark:text-white" />
   )}
 </button>
 </div>
