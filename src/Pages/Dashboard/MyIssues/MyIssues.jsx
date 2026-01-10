@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loading from '../../Auth/SocialLogin/Loading';
+ 
 
 const MyIssues = () => {
     const { user } = useAuth();
@@ -232,12 +234,7 @@ const MyIssues = () => {
         : issues;
 
     if (isLoading) return (
-        <div className="min-h-[400px] flex items-center justify-center">
-            <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-                <p className="text-gray-600 dark:text-gray-400">Loading your issues...</p>
-            </div>
-        </div>
+                 <Loading></Loading>
     );
     
     if (error) return (
@@ -248,7 +245,7 @@ const MyIssues = () => {
     );
 
     return (
-        <div className="p-4 md:p-6">
+        <div className="p-4 md:p-6 bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 ">
             <ToastContainer position="top-right" autoClose={3000} />
             
             <motion.h2 
@@ -334,7 +331,7 @@ const MyIssues = () => {
                         className={`group bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border ${
                             issue.isBoosted 
                                 ? 'border-2 border-purple-500 dark:border-purple-400 shadow-lg shadow-purple-500/20' 
-                                : 'border border-gray-200 dark:border-gray-700'
+                                : 'border border-gray-400 dark:border-gray-400'
                         }`}
                     >
                         {/* Boosted Badge */}
@@ -426,31 +423,31 @@ const MyIssues = () => {
                                     className="flex items-center gap-1 px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-colors flex-1 justify-center"
                                     title={issue.status !== 'pending' ? 'Only pending issues can be edited' : 'Edit Issue'}
                                 >
-                                    <FiEdit /> Edit
+                                    <FiEdit /> 
                                 </button>
                                 <button
                                     onClick={() => handleDelete(issue._id)}
                                     className="flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors flex-1 justify-center"
                                     title="Delete Issue"
                                 >
-                                    <FiTrash2 /> Delete
+                                    <FiTrash2 /> 
                                 </button>
                                 <button
                                     onClick={() => navigate(`/dashboard/issueDetails/${issue._id}`)}
-                                    className="flex items-center gap-1 px-3 py-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-lg transition-colors flex-1 justify-center"
+                                    className="flex items-center gap-1 px-3 py-2 bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors flex-1 justify-center"
                                     title="View Details"
                                 >
-                                    <FaMagnifyingGlass /> View
+                                    <FaMagnifyingGlass /> 
                                 </button>
                             </div>
 
                             {/* Boost Button Section - Corrected */}
-                            <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+                            <div className=" pt-3 border-t border-gray-100 dark:border-gray-700">
                                 {issue.isBoosted ? (
-                                    <div className="flex items-center justify-center gap-2 text-purple-600 dark:text-purple-400">
+                                    <div className="flex items-center justify-center  text-purple-600 dark:text-purple-400">
                                         <FaCrown />
                                         <span className="text-sm font-semibold">Already Boosted</span>
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs text-gray-400">
                                             {issue.boostedAt ? new Date(issue.boostedAt).toLocaleDateString() : ''}
                                         </span>
                                     </div>

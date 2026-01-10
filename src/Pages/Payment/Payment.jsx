@@ -47,7 +47,7 @@ const Payment = () => {
 
         try {
             const res = await axiosSecure.post('/create-boost-payment', paymentInfo);
-            
+            console.log(res)
             if (res.data.url) {
                 toast.success('Redirecting to secure payment gateway...', {
                     position: "top-right",
@@ -84,7 +84,7 @@ const Payment = () => {
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+        <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">

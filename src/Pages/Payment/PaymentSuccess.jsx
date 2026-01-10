@@ -563,7 +563,7 @@ const PaymentSuccess = () => {
     const receipt = generateReceipt();
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-green-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+        <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
             <div className="max-w-4xl mx-auto">
                 {/* Success Animation */}
                 <motion.div

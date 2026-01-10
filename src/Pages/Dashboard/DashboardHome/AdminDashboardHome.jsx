@@ -39,6 +39,7 @@ import {
   Area
 } from 'recharts';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
+import Loading from '../../Auth/SocialLogin/Loading';
 
 const AdminDashboardHome = () => {
     const axiosSecure = useAxiosSecure();
@@ -185,12 +186,7 @@ const AdminDashboardHome = () => {
     // Loading state
     if (usersLoading || issuesLoading || paymentsLoading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading dashboard data...</p>
-                </div>
-            </div>
+            <Loading></Loading>
         );
     }
 
@@ -210,7 +206,7 @@ const AdminDashboardHome = () => {
     };
 
     return (
-        <div className="p-6 space-y-8 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+        <div className="p-6 space-y-8 bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-200">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>

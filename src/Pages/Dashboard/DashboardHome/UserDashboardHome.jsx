@@ -39,6 +39,7 @@ import {
     LineChart,
     Line
 } from 'recharts';
+import Loading from '../../Auth/SocialLogin/Loading';
 
 const UserDashboardHome = () => {
     const { user } = useAuth();
@@ -273,8 +274,10 @@ const UserDashboardHome = () => {
 
     if (loading) {
         return (
+            
             <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
                 <div className="max-w-7xl mx-auto">
+                    <Loading></Loading>
                     <div className="animate-pulse">
                         <div className="h-12 w-64 bg-linear-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-lg mb-8"></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -297,7 +300,7 @@ const UserDashboardHome = () => {
     const monthlyData = getMonthlyActivityData();
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+        <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <motion.div 
@@ -315,9 +318,9 @@ const UserDashboardHome = () => {
                                 Track your contributions and community impact
                             </p>
                         </div>
-                        
-                        <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                            <div className="w-12 h-12 rounded-full overflow-hidden border-4 border-white dark:border-gray-700 shadow">
+
+                        <div className="flex items-center gap-3 bg-gradient-to-br from-amber-50 to-amber-200 dark:from-gray-800 dark:to-gray-600 p-3 rounded-xl shadow-lg border border-amber-300 dark:border-gray-700">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-300 dark:border-gray-700 shadow">
                                 {user?.photoURL ? (
                                     <img src={user.photoURL} alt={user.displayName} className="w-full h-full object-cover" />
                                 ) : (
@@ -326,7 +329,7 @@ const UserDashboardHome = () => {
                                     </div>
                                 )}
                             </div>
-                            <div>
+                            <div >
                                 <h3 className="font-semibold text-gray-800 dark:text-white">{user?.displayName}</h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
                                     <FaEnvelope className="text-xs" /> {user?.email}

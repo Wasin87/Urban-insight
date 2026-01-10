@@ -282,10 +282,10 @@ const Service = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {issues.map((issue) => {
                             const statusInfo = getStatusInfo(issue.status);
-                            const priorityInfo = getPriorityInfo(issue.priority);
+                            // const priorityInfo = getPriorityInfo(issue.priority);
                             const isOwner = user?.email === issue.submittedBy;
                             const isUpvoted = upvotedIssues.includes(issue._id);
                             const issueImage = getIssueImage(issue);
@@ -293,7 +293,7 @@ const Service = () => {
                             return (
                                 <div
                                     key={issue._id}
-                                    className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-700 overflow-hidden"
+                                    className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-400 dark:border-gray-400 overflow-hidden"
                                 >
                                     {/* Issue Image */}
                                     <div className="relative h-48 overflow-hidden">
@@ -310,7 +310,7 @@ const Service = () => {
                                         </div>
                                         {issue.isBoosted && (
                                             <div className="absolute top-3 left-3">
-                                                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-linear-to-r from-yellow-500 to-amber-500 text-white">
+                                                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-linear-to-r from-yellow-200 to-amber-600 text-white">
                                                     ⚡ Boosted
                                                 </span>
                                             </div>
@@ -324,11 +324,11 @@ const Service = () => {
                                             <h3 className="font-bold text-xl text-gray-800 dark:text-white mb-2 line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                                                 {issue.issueTitle || issue.title || 'Untitled Issue'}
                                             </h3>
-                                            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                            {/* <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                                                 <FaCalendarAlt className="text-amber-500" />
                                                 <span className="font-medium">{formatDate(issue.createdAt)}</span>
                                                 <span className="text-xs">• {formatTime(issue.createdAt)}</span>
-                                            </div>
+                                            </div> */}
                                         </div>
 
                                         {/* Issue Details */}
@@ -342,7 +342,7 @@ const Service = () => {
                                                 </span>
                                             </div>
 
-                                            {/* Priority */}
+                                            {/* Priority
                                             <div className="flex items-center gap-2">
                                                 <MdPriorityHigh className="text-amber-500 dark:text-amber-400" />
                                                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Priority:</span>
@@ -350,7 +350,7 @@ const Service = () => {
                                                     {priorityInfo.icon}
                                                     {priorityInfo.text}
                                                 </span>
-                                            </div>
+                                            </div> */}
 
                                             {/* Location */}
                                             <div className="flex items-start gap-2">
@@ -361,12 +361,12 @@ const Service = () => {
                                             </div>
                                         </div>
 
-                                        {/* Issue Description */}
+                                        {/* Issue Description
                                         <div className="mb-6">
                                             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
                                                 {issue.description || 'No description provided'}
                                             </p>
-                                        </div>
+                                        </div> */}
 
                                         {/* Reporter Info */}
                                         {issue.submittedBy && (
@@ -380,12 +380,12 @@ const Service = () => {
                                         )}
 
                                         {/* Stats and Actions */}
-                                        <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                                        <div className="flex items-center justify-between ">
                                             <div className="flex items-center gap-4">
                                                 <div className="flex items-center gap-1">
                                                     <FaThumbsUp className={`text-sm ${isUpvoted ? 'text-amber-500' : 'text-gray-400'}`} />
                                                     <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                                        {issue.upvotes || 0} upvotes
+                                                        {issue.upvotes || 0} 
                                                     </span>
                                                 </div>
                                                 {issue.comments && (
@@ -416,7 +416,7 @@ const Service = () => {
                                                 {/* View Details Button */}
                                                 <button
                                                     onClick={() => navigate(`/dashboard/issueDetails/${issue._id}`)}
-                                                    className="flex items-center gap-1 px-3 py-2 bg-linear-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                                                    className="flex items-center gap-1 px-3 py-2 bg-linear-to-r from-amber-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                                                 >
                                                     <FaEye />
                                                     View

@@ -20,6 +20,7 @@ import {
 } from 'react-icons/fa';
 import { MdAssignment, MdLocationOn, MdWork, MdEmail, MdPerson, MdDarkMode, MdLightMode } from 'react-icons/md';
 import { BiCategory } from 'react-icons/bi';
+import Loading from '../../Auth/SocialLogin/Loading';
 
 const AssignStaffs = () => {
     const [selectedIssue, setSelectedIssue] = useState(null);
@@ -247,12 +248,7 @@ const AssignStaffs = () => {
     // Loading state
     if (issuesLoading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 dark:border-blue-800 dark:border-t-blue-400 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading issues...</p>
-                </div>
-            </div>
+            <Loading></Loading>
         );
     }
 

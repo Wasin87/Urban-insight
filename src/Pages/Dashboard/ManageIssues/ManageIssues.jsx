@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import useAuth from '../../../Hooks/useAuth';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
@@ -14,59 +14,81 @@ import {
   FaCalendarAlt,
   FaMapMarkerAlt,
   FaEye,
-  FaEdit
+  FaTimes,
+  FaPhone,
+  FaEnvelope,
+  FaImage,
+  FaClipboard,
+  FaTag
 } from 'react-icons/fa';
 import { MdPriorityHigh, MdCategory } from 'react-icons/md';
 import { MdInfo } from "react-icons/md";
+import Loading from '../../Auth/SocialLogin/Loading';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ManageIssues = () => {
   const { user } = useAuth();
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "winter");
   const axiosSecure = useAxiosSecure();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [showIssueModal, setShowIssueModal] = useState(false);
 
   // Fetch staff's assigned issues
   const { data: issues = [], refetch, isLoading } = useQuery({
-    queryKey: ['staffIssues', user?.email, statusFilter, priorityFilter],
+    queryKey: ['staffIssues', user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
       
-       
-      const staffRes = await axiosSecure.get(`/users/${user.email}`);
-      const staff = staffRes.data;
-      
-      if (!staff?._id) return [];
-      
-      
-      const issuesRes = await axiosSecure.get(`/staff/${staff._id}/issues`);
-      const assignedIssues = issuesRes.data?.issues || [];
-      
-       
-      let filteredIssues = assignedIssues;
-      
-      if (statusFilter !== 'all') {
-        filteredIssues = filteredIssues.filter(issue => issue.status === statusFilter);
+      try {
+        const staffRes = await axiosSecure.get(`/users/${user.email}`);
+        const staff = staffRes.data;
+        
+        if (!staff?._id) return [];
+        
+        const issuesRes = await axiosSecure.get(`/staff/${staff._id}/issues`);
+        return issuesRes.data?.issues || [];
+      } catch (error) {
+        console.error('Error fetching issues:', error);
+        return [];
       }
-      
-      if (priorityFilter !== 'all') {
-        filteredIssues = filteredIssues.filter(issue => issue.priority === priorityFilter);
-      }
-      
-      if (searchTerm) {
-        filteredIssues = filteredIssues.filter(issue => 
-          issue.issueTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          issue.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          issue.submittedBy?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-      
-      return filteredIssues;
     },
     enabled: !!user?.email
   });
 
-  
+  // Apply filters locally
+  const filteredIssues = issues.filter(issue => {
+    // Search filter
+    const searchMatch = searchTerm === '' || 
+      issue.issueTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.submittedBy?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.issueType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.district?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Status filter
+    const statusMatch = statusFilter === 'all' || issue.status === statusFilter;
+    
+    // Priority filter - handle both 'urgent' and 'high' as high priority
+    let priorityMatch = priorityFilter === 'all';
+    if (priorityFilter === 'high') {
+      priorityMatch = issue.priority === 'high' || issue.priority === 'urgent';
+    } else if (priorityFilter !== 'all') {
+      priorityMatch = issue.priority === priorityFilter;
+    }
+
+    return searchMatch && statusMatch && priorityMatch;
+  });
+
+  // Theme management
+  useEffect(() => {
+    const html = document.documentElement;
+    html.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   const handleStatusUpdate = async (issueId, newStatus, issueTitle) => {
     try {
       const statusUpdate = {
@@ -74,7 +96,6 @@ const ManageIssues = () => {
         updatedAt: new Date().toISOString()
       };
 
-       
       const result = await Swal.fire({
         title: `Update Status to ${newStatus}?`,
         html: `
@@ -93,12 +114,11 @@ const ManageIssues = () => {
         cancelButtonText: 'Cancel',
         confirmButtonColor: '#10B981',
         cancelButtonColor: '#6B7280',
-        background: '#ffffff',
-        color: '#111827'
+        background: theme === "night" ? "#1f2937" : "#ffffff",
+        color: theme === "night" ? "#ffffff" : "#111827",
       });
 
       if (result.isConfirmed) {
-        // Show loading
         Swal.fire({
           title: 'Updating Status...',
           text: 'Please wait while we update the issue status',
@@ -111,8 +131,7 @@ const ManageIssues = () => {
         const response = await axiosSecure.patch(`/issues/${issueId}/status`, statusUpdate);
 
         if (response.data.success) {
-        
-          refetch();
+          await refetch();
 
           Swal.fire({
             icon: 'success',
@@ -145,6 +164,25 @@ const ManageIssues = () => {
     }
   };
 
+  // View issue details modal
+  const handleViewIssue = (issue) => {
+    setSelectedIssue(issue);
+    setShowIssueModal(true);
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setShowIssueModal(false);
+    setSelectedIssue(null);
+  };
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    setPriorityFilter('all');
+  };
+
   // Get status badge color
   const getStatusBadge = (status) => {
     switch (status) {
@@ -163,7 +201,10 @@ const ManageIssues = () => {
 
   // Get priority badge color
   const getPriorityBadge = (priority) => {
-    switch (priority?.toLowerCase()) {
+    const priorityLower = priority?.toLowerCase();
+    switch (priorityLower) {
+      case 'urgent':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
       case 'high':
         return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
       case 'medium':
@@ -177,7 +218,8 @@ const ManageIssues = () => {
 
   // Get category badge color
   const getCategoryBadge = (category) => {
-    switch (category?.toLowerCase()) {
+    const categoryLower = category?.toLowerCase();
+    switch (categoryLower) {
       case 'infrastructure':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
       case 'environment':
@@ -191,19 +233,23 @@ const ManageIssues = () => {
     }
   };
 
+  // Format date
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading issues...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
+    <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
@@ -215,11 +261,11 @@ const ManageIssues = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 w-80 md:w-full">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Total Issues</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Total Assigned</p>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{issues.length}</h3>
             </div>
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
@@ -259,9 +305,9 @@ const ManageIssues = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">High Priority</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Urgent Priority</p>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-                {issues.filter(i => i.priority === 'high').length}
+                {issues.filter(i => i.priority === 'high' || i.priority === 'urgent').length}
               </h3>
             </div>
             <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-full">
@@ -271,15 +317,27 @@ const ManageIssues = () => {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-          <FaFilter className="text-gray-400" />
-          Filter Issues
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Filters Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 w-80 md:w-full">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <FaFilter className="text-gray-400" />
+            Filter & Search Issues
+          </h3>
+          {(searchTerm || statusFilter !== 'all' || priorityFilter !== 'all') && (
+            <button
+              onClick={handleClearFilters}
+              className="px-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
+            >
+              <FaTimes className="w-3 h-3" />
+              Clear Filters
+            </button>
+          )}
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Search Input */}
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <div className="flex items-center gap-2">
                 <FaSearch className="text-gray-400" />
@@ -288,11 +346,14 @@ const ManageIssues = () => {
             </label>
             <input
               type="text"
-              placeholder="Search by title, description, or reporter..."
+              placeholder="Search by title, description, reporter, location, or category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:focus:ring-amber-400 dark:focus:border-amber-400 outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Search across all fields including description, category, and location
+            </p>
           </div>
 
           {/* Status Filter */}
@@ -300,13 +361,13 @@ const ManageIssues = () => {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <div className="flex items-center gap-2">
                 <MdInfo className="text-gray-400" />
-                <span>Status</span>
+                <span>Filter by Status</span>
               </div>
             </label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:focus:ring-amber-400 dark:focus:border-amber-400 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="all">All Status</option>
               <option value="assigned">Assigned</option>
@@ -321,84 +382,124 @@ const ManageIssues = () => {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <div className="flex items-center gap-2">
                 <MdPriorityHigh className="text-gray-400" />
-                <span>Priority</span>
+                <span>Filter by Priority</span>
               </div>
             </label>
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:focus:ring-amber-400 dark:focus:border-amber-400 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="all">All Priorities</option>
+              <option value="high">Urgent</option>
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
           </div>
         </div>
+
+        {/* Active Filters Display */}
+        {(searchTerm || statusFilter !== 'all' || priorityFilter !== 'all') && (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Active Filters:</p>
+            <div className="flex flex-wrap gap-2">
+              {searchTerm && (
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-sm">
+                  Search: "{searchTerm}"
+                </span>
+              )}
+              {statusFilter !== 'all' && (
+                <span className="px-3 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 rounded-full text-sm">
+                  Status: {statusFilter}
+                </span>
+              )}
+              {priorityFilter !== 'all' && (
+                <span className="px-3 py-1 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 rounded-full text-sm">
+                  Priority: {priorityFilter}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Issues Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Assigned Issues</h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            Total: {issues.length} issues found
-          </p>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden w-80 md:w-full">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Assigned Issues</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              Showing {filteredIssues.length} of {issues.length} issues
+              {filteredIssues.length !== issues.length && (
+                <span className="ml-2 text-amber-600 dark:text-amber-400">
+                  (Filtered)
+                </span>
+              )}
+            </p>
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Updated: Just now
+          </div>
         </div>
 
-        {issues.length === 0 ? (
+        {filteredIssues.length === 0 ? (
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
-              <FaCheckCircle className="text-3xl text-blue-600 dark:text-blue-400" />
+              <FaSearch className="text-3xl text-amber-600 dark:text-amber-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">No Issues Found</h3>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+              No Issues Found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md mx-auto">
               {searchTerm || statusFilter !== 'all' || priorityFilter !== 'all' 
-                ? 'Try adjusting your filters' 
-                : 'No issues are currently assigned to you'}
+                ? 'No issues match your current filters. Try adjusting your search criteria.' 
+                : 'No issues are currently assigned to you. Check back later.'}
             </p>
             {(searchTerm || statusFilter !== 'all' || priorityFilter !== 'all') && (
               <button 
-                onClick={() => {
-                  setSearchTerm('');
-                  setStatusFilter('all');
-                  setPriorityFilter('all');
-                }}
-                className="btn btn-primary mt-4"
+                onClick={handleClearFilters}
+                className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors"
               >
-                Clear Filters
+                Clear All Filters
               </button>
             )}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="table w-full">
+            <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="font-semibold text-gray-700 dark:text-gray-300">#</th>
-                  <th className="font-semibold text-gray-700 dark:text-gray-300">Issue Details</th>
-                  <th className="font-semibold text-gray-700 dark:text-gray-300">Priority</th>
-                  <th className="font-semibold text-gray-700 dark:text-gray-300">Category</th>
-                  <th className="font-semibold text-gray-700 dark:text-gray-300">Status</th>
-                  <th className="font-semibold text-gray-700 dark:text-gray-300">Submitted By</th>
-                  <th className="font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">#</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Issue Details</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Priority</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Submitted By</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                {issues.map((issue, index) => (
-                  <tr key={issue._id} className="hover:bg-blue-50 dark:hover:bg-gray-700/50 transition-colors">
-                    <td className="font-medium">{index + 1}</td>
-                    <td>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {filteredIssues.map((issue, index) => (
+                  <tr 
+                    key={issue._id} 
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                      {index + 1}
+                    </td>
+                    <td className="px-6 py-4">
                       <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">{issue.issueTitle}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                          {issue.description}
+                        <p className="font-semibold text-gray-900 dark:text-white mb-1">
+                          {issue.title || 'Untitled Issue'}
                         </p>
-                        <div className="flex items-center gap-3 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
+                          {issue.description || 'No description provided'}
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <FaCalendarAlt className="w-3 h-3" />
-                            {new Date(issue.createdAt).toLocaleDateString()}
+                            {formatDate(issue.createdAt)}
                           </span>
                           {issue.district && (
                             <span className="flex items-center gap-1">
@@ -409,47 +510,58 @@ const ManageIssues = () => {
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getPriorityBadge(issue.priority)}`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize ${getPriorityBadge(issue.priority)}`}>
                         {issue.priority || 'Medium'}
                       </span>
                     </td>
-                    <td>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getCategoryBadge(issue.issueType)}`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize ${getCategoryBadge(issue.issueType)}`}>
                         {issue.issueType || 'General'}
                       </span>
                     </td>
-                    <td>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusBadge(issue.status)}`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize ${getStatusBadge(issue.status)}`}>
                         {issue.status?.replace('-', ' ') || 'Unknown'}
                       </span>
                     </td>
-                    <td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <FaUser className="text-gray-400" />
-                        <span className="text-sm">{issue.submittedBy}</span>
+                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <FaUser className="text-gray-500 dark:text-gray-400" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {issue.submittedBy || 'Anonymous'}
+                          </p>
+                          {issue.email && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {issue.email}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </td>
-                    <td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-wrap gap-2">
                         {/* Status Update Buttons */}
                         {issue.status !== 'resolved' && issue.status !== 'rejected' && (
                           <>
                             <button
                               onClick={() => handleStatusUpdate(issue._id, 'in-progress', issue.issueTitle)}
-                              className="btn btn-sm bg-amber-500 hover:bg-amber-600 text-white border-0"
+                              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
                               title="Mark as In Progress"
                             >
-                              <FaClock className="w-3 h-3 mr-1" />
+                              <FaClock className="w-3 h-3" />
                               In Progress
                             </button>
                             
                             <button
                               onClick={() => handleStatusUpdate(issue._id, 'resolved', issue.issueTitle)}
-                              className="btn btn-sm bg-green-500 hover:bg-green-600 text-white border-0"
+                              className="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
                               title="Mark as Resolved"
                             >
-                              <FaCheckCircle className="w-3 h-3 mr-1" />
+                              <FaCheckCircle className="w-3 h-3" />
                               Resolved
                             </button>
                           </>
@@ -458,7 +570,7 @@ const ManageIssues = () => {
                         {issue.status === 'in-progress' && (
                           <button
                             onClick={() => handleStatusUpdate(issue._id, 'rejected', issue.issueTitle)}
-                            className="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-0"
+                            className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition-colors"
                             title="Mark as Rejected"
                           >
                             Reject
@@ -467,10 +579,12 @@ const ManageIssues = () => {
                         
                         {/* View Details Button */}
                         <button
-                          className="btn btn-sm btn-outline border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
-                          title="View Details"
+                          onClick={() => handleViewIssue(issue)}
+                          className="px-3 py-1.5 border border-amber-100 dark:border-gray-100 text-gray-50 dark:text-gray-50 text-xs font-medium rounded-lg bg-amber-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
+                          title="View Full Details"
                         >
                           <FaEye className="w-3 h-3" />
+                          View
                         </button>
                       </div>
                     </td>
@@ -486,12 +600,197 @@ const ManageIssues = () => {
       <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <h3 className="font-bold text-gray-800 dark:text-white mb-4">Status Legend:</h3>
         <div className="flex flex-wrap gap-3">
-          <span className="badge bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">Assigned - Recently assigned</span>
-          <span className="badge bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">In Progress - Currently working</span>
-          <span className="badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Resolved - Successfully completed</span>
-          <span className="badge bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">Rejected - Cannot be resolved</span>
+          <span className="px-3 py-1.5 rounded-full text-sm bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+            Assigned - Recently assigned
+          </span>
+          <span className="px-3 py-1.5 rounded-full text-sm bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+            In Progress - Currently working
+          </span>
+          <span className="px-3 py-1.5 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+            Resolved - Successfully completed
+          </span>
+          <span className="px-3 py-1.5 rounded-full text-sm bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+            Rejected - Cannot be resolved
+          </span>
         </div>
       </div>
+
+      {/* Issue Details Modal */}
+      <AnimatePresence>
+        {showIssueModal && selectedIssue && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Issue Details</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                    ID: {selectedIssue._id?.slice(-8)}
+                  </p>
+                </div>
+                <button
+                  onClick={handleCloseModal}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <FaTimes className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+                {/* Issue Title */}
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {selectedIssue.issueTitle}
+                  </h2>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(selectedIssue.status)}`}>
+                      {selectedIssue.status?.replace('-', ' ')}
+                    </span>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPriorityBadge(selectedIssue.priority)}`}>
+                      {selectedIssue.priority} Priority
+                    </span>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryBadge(selectedIssue.issueType)}`}>
+                      {selectedIssue.issueType}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                    <FaClipboard className="text-gray-400" />
+                    Description
+                  </h4>
+                  <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
+                    <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                      {selectedIssue.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  {/* Submitted By */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                      <FaUser className="text-gray-400" />
+                      Submitted By
+                    </h4>
+                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
+                      <p className="font-medium text-gray-900 dark:text-white">{selectedIssue.submittedBy}</p>
+                      {selectedIssue.email && (
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                          <FaEnvelope className="inline w-3 h-3 mr-1" />
+                          {selectedIssue.email}
+                        </p>
+                      )}
+                      {selectedIssue.phone && (
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                          <FaPhone className="inline w-3 h-3 mr-1" />
+                          {selectedIssue.phone}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Location & Date */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                      <FaMapMarkerAlt className="text-gray-400" />
+                      Location & Date
+                    </h4>
+                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 space-y-2">
+                      {selectedIssue.district && (
+                        <p className="text-gray-700 dark:text-gray-300">
+                          <strong>District:</strong> {selectedIssue.district}
+                        </p>
+                      )}
+                      {selectedIssue.thana && (
+                        <p className="text-gray-700 dark:text-gray-300">
+                          <strong>Thana:</strong> {selectedIssue.thana}
+                        </p>
+                      )}
+                      {selectedIssue.address && (
+                        <p className="text-gray-700 dark:text-gray-300">
+                          <strong>Address:</strong> {selectedIssue.address}
+                        </p>
+                      )}
+                      <p className="text-gray-700 dark:text-gray-300">
+                        <strong>Reported:</strong> {formatDate(selectedIssue.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Images */}
+                {selectedIssue.images && selectedIssue.images.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                      <FaImage className="text-gray-400" />
+                      Attached Images ({selectedIssue.images.length})
+                    </h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {selectedIssue.images.map((image, index) => (
+                        <div key={index} className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                          <img
+                            src={image}
+                            alt={`Issue image ${index + 1}`}
+                            className="w-full h-32 object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Information */}
+                {selectedIssue.additionalInfo && (
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                      <FaTag className="text-gray-400" />
+                      Additional Information
+                    </h4>
+                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {selectedIssue.additionalInfo}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={handleCloseModal}
+                    className="px-6 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Close
+                  </button>
+                  {(selectedIssue.status !== 'resolved' && selectedIssue.status !== 'rejected') && (
+                    <button
+                      onClick={() => {
+                        handleStatusUpdate(selectedIssue._id, 'resolved', selectedIssue.issueTitle);
+                        handleCloseModal();
+                      }}
+                      className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                    >
+                      Mark as Resolved
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

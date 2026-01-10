@@ -7,6 +7,8 @@ import {
   TrendingUp,
   ArrowRight
 } from 'lucide-react';
+import { Link } from 'react-router';
+import { FaArrowRight } from 'react-icons/fa';
 
 const Work = () => {
   const steps = [
@@ -95,8 +97,8 @@ const Work = () => {
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse delay-1000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse delay-1000"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto">
@@ -108,14 +110,14 @@ const Work = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-linear-to-r from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 mb-4">
-            <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-linear-to-r from-amber-100 to-amber-100 dark:from-blue-900/30 dark:to-cyan-900/30 mb-4">
+            <span className="text-sm font-semibold text-amber-600 dark:text-amber-300">
               Process Flow
             </span>
           </div>
           
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            How It <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Works</span>
+            How It <span className="bg-linear-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">Works</span>
           </h2>
           
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -185,14 +187,7 @@ const Work = () => {
                   {step.description}
                 </p>
 
-                {/* CTA Button */}
-                <motion.button
-                  whileHover={{ x: 5 }}
-                  className="flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 group/btn"
-                >
-                  Learn more
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                </motion.button>
+ 
 
                 {/* Step Indicator */}
                 <div className="absolute bottom-4 right-4">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { FaMoon, FaSun, FaBars, FaTimes, FaChevronDown, FaUser, FaCog, FaSignOutAlt, FaBell, FaSearch, FaHome, FaInfoCircle, FaMapMarkedAlt, FaClipboardList, FaTachometerAlt } from "react-icons/fa";
+import { FaMoon, FaSun, FaBars, FaTimes, FaChevronDown, FaUser, FaCog, FaSignOutAlt, FaBell, FaSearch, FaHome, FaInfoCircle, FaMapMarkedAlt, FaClipboardList, FaTachometerAlt, FaArrowRight, FaChevronRight } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
 import Logo from "../../../../components/Logo/Logo";
@@ -229,14 +229,12 @@ const Navbar = () => {
   };
 
   const handleMarkAsRead = async (notificationId) => {
-    // Here you would typically send a request to mark notification as read
-    // For now, we'll just refetch notifications
+  
     await refetchNotifications();
   };
 
   const handleMarkAllAsRead = async () => {
-    // Here you would typically send a request to mark all notifications as read
-    // For now, we'll just refetch notifications
+    
     Swal.fire({
       title: "Mark all as read?",
       text: "Are you sure you want to mark all notifications as read?",
@@ -282,6 +280,65 @@ const Navbar = () => {
     }
   };
 
+ 
+const getNotificationLink = (notification) => {
+  
+  
+  if (notification.link) return notification.link;
+  
+  
+  const userRole = getUserRole();  
+  
+ 
+  switch (notification.type) {
+    case 'resolved':
+    case 'rejected':
+    case 'progress':
+     
+      if (userRole === 'admin' || userRole === 'staff') {
+        return `/dashboard/issues/${notification.issueId}`;
+      } else {
+        return `/my-issues/${notification.issueId}`;
+      }
+    
+    case 'assignment':
+      if (userRole === 'staff') {
+        return `/dashboard/assigned-tasks`;
+      } else if (userRole === 'admin') {
+        return `/dashboard/assignments`;
+      }
+      break;
+    
+    case 'message':
+      return `/dashboard/messages`;
+    
+    case 'system':
+      return `/dashboard/system-updates`;
+    
+    default:
+      // Default dashboard based on user role
+      switch (userRole) {
+        case 'admin':
+          return '/dashboard/admin';
+        case 'staff':
+          return '/dashboard/staff';
+        case 'citizen':
+          return '/dashboard/citizen';
+        default:
+          return '/dashboard';
+      }
+  }
+};
+
+ 
+ 
+const getUserRole = () => {
+  
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user.role || 'citizen'; 
+};
+
+  
   const handleLogOut = () => {
     Swal.fire({
       title: "Sign Out?",
@@ -304,7 +361,7 @@ const Navbar = () => {
               icon: "success",
               timer: 1500,
               showConfirmButton: false,
-              background: theme === "night" ? "#ffffff" : "#ffffff",
+              background: theme === "night" ? "#1f2937" : "#ffffff",
               color: theme === "night" ? "#ffffff" : "#111827",
             });
           })
@@ -356,8 +413,8 @@ const Navbar = () => {
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
         className={`fixed w-full top-0 left-0 z-50 transition-all duration-500 ${
           scrolled 
-            ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-xl py-2" 
-            : "bg-linear-to-r from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-4"
+            ? "bg-amber-100 dark:bg-gray-900/90 backdrop-blur-lg shadow-xl py-2" 
+            : "bg-linear-to-r from-amber-50 to-amber-200 dark:from-gray-900 dark:to-gray-800 py-4"
         }`}
       >
         <div className="px-4 sm:px-6 lg:px-5">
@@ -487,114 +544,199 @@ const Navbar = () => {
                       setNotificationsOpen(!notificationsOpen);
                       setProfileDropdownOpen(false);
                     }}
-                    className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    className="relative p-2  rounded-full hover:bg-amber-100 dark:hover:bg-gray-500 transition-colors"
                   >
-                    <FaBell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                    <FaBell className="w-4 h-4 ml-5 text-amber-700 dark:text-amber-300" />
                     {notifications.length > 0 && (
                       <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                     )}
                   </button>
 
-                  <AnimatePresence>
-                    {notificationsOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
-                      >
-                        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                          <div>
-                            <h3 className="font-bold text-gray-900 dark:text-white">Notifications</h3>
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                              {notifications.length} {notifications.length === 1 ? 'notification' : 'notifications'}
-                            </span>
-                          </div>
-                          {notifications.length > 0 && (
-                            <button
-                              onClick={handleMarkAllAsRead}
-                              className="text-xs text-amber-600 dark:text-amber-400 hover:underline"
-                            >
-                              Mark all as read
-                            </button>
-                          )}
-                        </div>
-                        <div className="max-h-96 overflow-y-auto">
-                          {notifications.length > 0 ? (
-                            notifications.map((notification) => (
-                              <Link
-                                key={notification.id}
-                                to={notification.link || "#"}
-                                onClick={() => {
-                                  handleMarkAsRead(notification.id);
-                                  setNotificationsOpen(false);
-                                }}
-                                className={`block p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                                  !notification.read ? "bg-amber-50/50 dark:bg-amber-900/20" : ""
-                                }`}
-                              >
-                                <div className="flex items-start space-x-3">
-                                  <div className="mt-1">
-                                    {getNotificationIcon(notification.type)}
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="flex justify-between items-start">
-                                      <h4 className="font-semibold text-gray-900 dark:text-white">
-                                        {notification.title}
-                                      </h4>
-                                      <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                                        {notification.time}
-                                      </span>
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                      {notification.message}
-                                    </p>
-                                    <div className="mt-2 flex items-center text-xs">
-                                      <span className={`px-2 py-1 rounded-full ${
-                                        notification.type === 'resolved' 
-                                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                          : notification.type === 'rejected'
-                                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                                          : notification.type === 'assignment'
-                                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                          : notification.type === 'progress'
-                                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                                      }`}>
-                                        {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
-                                      </span>
-                                      {!notification.read && (
-                                        <span className="ml-2 px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 rounded-full">
-                                          New
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              </Link>
-                            ))
-                          ) : (
-                            <div className="p-8 text-center">
-                              <FaBell className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                              <p className="text-gray-500 dark:text-gray-400">No notifications yet</p>
-                              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                                You'll be notified about issue updates here
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-                          <Link
-                            to="/dashboard/notifications"
-                            className="text-sm text-amber-600 dark:text-amber-400 font-medium hover:underline flex items-center justify-center"
-                            onClick={() => setNotificationsOpen(false)}
-                          >
-                            View all notifications
-                          </Link>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+<AnimatePresence>
+  {notificationsOpen && (
+<motion.div
+  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+  animate={{ opacity: 1, y: 0, scale: 1 }}
+  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+  transition={{ duration: 0.2 }}
+  className="absolute right-0 mt-2 w-[230px]  md:w-[380px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+  style={{
+    maxHeight: 'calc(100vh - 100px)',
+  }}
+>
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50">
+        <div>
+          <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <FaBell className="w-4 h-4 text-amber-500" />
+            Notifications
+          </h3>
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {notifications.length} {notifications.length === 1 ? 'notification' : 'notifications'}
+          </span>
+        </div>
+        {notifications.length > 0 && (
+          <button
+            onClick={handleMarkAllAsRead}
+            className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:underline transition-colors px-2 py-1 rounded hover:bg-amber-50 dark:hover:bg-amber-900/20"
+          >
+            Mark all read
+          </button>
+        )}
+      </div>
+
+{/* Notifications List with Scroll */}
+<div className="max-h-[330px] sm:max-h-[420px] overflow-y-auto custom-scrollbar">
+  {notifications.length > 0 ? (
+    notifications.map((notification, index) => (
+      <motion.div
+        key={notification.id}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -10 }}
+        transition={{ duration: 0.2, delay: index * 0.05 }}
+        className="relative"
+      >
+        <Link
+          to={getNotificationLink(notification)}
+          onClick={() => {
+            handleMarkAsRead(notification.id);
+            setNotificationsOpen(false);
+          }}
+          className={`block p-3 sm:p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-600 dark:hover:bg-gray-700 transition-all duration-200 active:bg-gray-100 dark:active:bg-gray-700 ${
+            !notification.read 
+              ? "bg-gradient-to-r from-amber-50/90 to-amber-100 dark:from-amber-900/25 dark:to-amber-900/10 border-l-3 border-l-amber-500" 
+              : ""
+          }`}
+        >
+          <div className="flex items-start gap-2 sm:gap-3">
+            {/* Notification Icon */}
+            <div className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mt-0.5 ${
+              notification.type === 'resolved' 
+                ? 'bg-green-100 dark:bg-green-900/30'
+                : notification.type === 'rejected'
+                ? 'bg-red-100 dark:bg-red-900/30'
+                : notification.type === 'assignment'
+                ? 'bg-blue-100 dark:bg-blue-900/30'
+                : notification.type === 'progress'
+                ? 'bg-yellow-100 dark:bg-yellow-900/30'
+                : 'bg-amber-300 dark:bg-amber-900/90 '
+            }`}>
+              {getNotificationIcon(notification.type)}
+            </div>
+
+            {/* Notification Content */}
+            <Link to="/dashboard" className="flex-1 min-w-0">
+              <div className="flex justify-between items-start gap-2 mb-1">
+                <h4 className="font-semibold text-gray-900 dark:text-white text-sm truncate pr-2">
+                  {notification.title}
+                </h4>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className="text-xs text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    {notification.time}
+                  </span>
+                  {!notification.read && (
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-500 rounded-full flex-shrink-0"></span>
+                  )}
+                </div>
+              </div>
+              
+              <p className="text-xs sm:text-sm text-amber-600 dark:text-amber-300 mb-2 line-clamp-2">
+                {notification.message}
+              </p>
+
+              {/* Tags and Actions */}
+              <div className="flex items-center justify-between mt-2">
+                <span className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${
+                  notification.type === 'resolved' 
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                    : notification.type === 'rejected'
+                    ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                    : notification.type === 'assignment'
+                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+                    : notification.type === 'progress'
+                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
+                    : 'bg-amber-300 text-amber-800 dark:bg-amber-700 dark:text-gray-300'
+                }`}>
+                  {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
+                </span>
+                
+                <Link to="/dashboard" className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">
+                  Tap to view →
+                </Link>
+                <Link to="/dashboard" className="text-xs text-gray-500 dark:text-gray-400 sm:hidden">
+                  Tap →
+                </Link>
+              </div>
+            </Link>
+          </div>
+          
+          {/* Mobile-only swipe indicator */}
+          <div className="sm:hidden absolute right-2 top-1/2 transform -translate-y-1/2 text-amber-500 dark:text-amber-600">
+            <FaChevronRight className="w-4 h-4" />
+          </div>
+        </Link>
+      </motion.div>
+    ))
+  ) : (
+    <div className="p-6 sm:p-8 text-center">
+      <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+        <FaBell className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600 dark:text-amber-500" />
+      </div>
+      <p className="text-gray-600 dark:text-gray-400 font-medium text-sm sm:text-base">No notifications yet</p>
+      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 mt-1">
+        You'll be notified about issue updates here
+      </p>
+    </div>
+  )}
+</div>
+
+      {/* Footer */}
+      <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <Link
+          to="/dashboard/notifications"
+          className="text-sm text-amber-600 dark:text-amber-400 font-medium hover:text-amber-700 dark:hover:text-amber-300 flex items-center justify-center gap-2 group"
+          onClick={() => setNotificationsOpen(false)}
+        >
+          {/* View all notifications */}
+          {/* <FaArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /> */}
+        </Link>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+<style jsx>{`
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+  
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.5);
+  }
+  
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(75, 85, 99, 0.7);
+  }
+`}</style>
                 </div>
               )}
 
@@ -754,230 +896,261 @@ const Navbar = () => {
                 </div>
               )}
 
-              {/* Mobile Menu Toggle */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="Toggle menu"
-              >
-                {mobileMenuOpen ? (
-                  <FaTimes className="w-6 h-6 text-gray-900 dark:text-white" />
-                ) : (
-                  <FaBars className="w-6 h-6 text-gray-900 dark:text-white" />
+ 
+
+
+
+
+{/* Mobile Menu Toggle */}
+<button
+  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+  className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+  aria-label="Toggle menu"
+>
+  {mobileMenuOpen ? (
+    <FaTimes className="w-6 h-6 text-gray-900 dark:text-white" />
+  ) : (
+    <FaBars className="w-4 h-4 mr-10 text-gray-900 dark:text-white" />
+  )}
+</button>
+</div>
+</div>
+</div>
+
+{/* Mobile Menu */}
+<AnimatePresence>
+  {mobileMenuOpen && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="lg:hidden fixed inset-0 z-50"
+      onClick={(e) => {
+        // Close menu when clicking outside
+        if (e.target === e.currentTarget) {
+          setMobileMenuOpen(false);
+        }
+      }}
+    >
+      {/* Backdrop - Only closes when clicked */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={() => setMobileMenuOpen(false)}
+      />
+      
+      {/* Menu Panel - Fixed positioning to prevent shifting */}
+      <motion.div
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl overflow-hidden"
+        style={{ 
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          height: '100vh',
+          zIndex: 1000
+        }}
+      >
+        <div className="h-full flex flex-col">
+          {/* Header - Fixed at top */}
+          <div className="flex-shrink-0 flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <Link to="/" className="flex items-center space-x-3" onClick={() => setMobileMenuOpen(false)}>
+              <Logo />
+            </Link>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMobileMenuOpen(false);
+              }}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Close menu"
+            >
+              <FaTimes className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            </button>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto overscroll-contain">
+            <div className="p-6">
+              {/* User Info */}
+              {user && (
+                <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-xl">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500">
+                      <img
+                        src={user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=amber-500&color=fff"}
+                        alt={user.displayName || "User"}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=amber-500&color=fff";
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-bold text-gray-900 dark:text-white truncate">{user.displayName}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 truncate">{user.email}</p>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        {isPremium && (
+                          <div className="flex items-center gap-1">
+                            <FaCrown className="w-3 h-3 text-amber-500" />
+                            <span className="text-xs font-bold text-amber-600">Premium</span>
+                          </div>
+                        )}
+                        <span className={`text-xs px-2 py-1 rounded-full flex-shrink-0 ${
+                          userData?.role === 'staff' 
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                            : userData?.role === 'admin'
+                            ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                        }`}>
+                          {userData?.role?.toUpperCase() || 'USER'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Mobile Links */}
+              <ul className="space-y-1">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    {link.submenu ? (
+                      <>
+                        <div className="px-4 py-3 font-medium text-gray-900 dark:text-white flex items-center justify-between">
+                          <span className="flex items-center space-x-3">
+                            {link.icon}
+                            <span>{link.label}</span>
+                          </span>
+                          <FaChevronDown className="w-3 h-3" />
+                        </div>
+                        <div className="pl-8 space-y-1">
+                          {link.submenu.map((item) => (
+                            <NavLink
+                              key={item.label}
+                              to={item.to}
+                              className={({ isActive }) => `block px-4 py-2.5 rounded-lg transition-colors ${
+                                isActive 
+                                  ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-gray-800' 
+                                  : 'text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                              }`}
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {item.label}
+                            </NavLink>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <NavLink
+                        to={link.to}
+                        className={({ isActive }) => `flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${
+                          isActive 
+                            ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {link.icon}
+                        <span>{link.label}</span>
+                      </NavLink>
+                    )}
+                  </li>
+                ))}
+                
+                {userLinks.map((link) => (
+                  <li key={link.label}>
+                    <NavLink
+                      to={link.to}
+                      className={({ isActive }) => `flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${
+                        isActive 
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' 
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {link.icon}
+                      <span>{link.label}</span>
+                    </NavLink>
+                  </li>
+                ))}
+
+                {/* Staff links for mobile */}
+                {user && userData?.role === 'staff' && (
+                  <li>
+                    <NavLink
+                      to="/addIssues"
+                      className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <FaClipboardList className="w-4 h-4" />
+                      <span>Assigned Issues</span>
+                    </NavLink>
+                  </li>
                 )}
-              </button>
+
+                {/* Premium Link for mobile */}
+                {user && !isPremium && (
+                  <li>
+                    <NavLink
+                      to="/premium"
+                      className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium bg-gradient-to-r from-amber-500 to-yellow-500 text-white hover:from-amber-600 hover:to-yellow-600 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <FaCrown className="w-4 h-4" />
+                      <span>Go Premium</span>
+                    </NavLink>
+                  </li>
+                )}
+              </ul>
+
+              {/* Auth Buttons for Mobile */}
+              {!user && (
+                <div className="mt-8 space-y-3">
+                  <Link
+                    to="/login"
+                    className="block w-full px-4 py-3 text-center font-medium border rounded-2xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="block w-full px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium rounded-lg text-center hover:from-amber-600 hover:to-orange-600 transition-all duration-300"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Create Account
+                  </Link>
+                </div>
+              )}
+
+              {/* Logout Button */}
+              {user && (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogOut();
+                  }}
+                  className="w-full mt-8 px-4 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <FaSignOutAlt className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 z-50"
-            >
-              {/* Backdrop */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                onClick={() => setMobileMenuOpen(false)}
-              />
-              
-              {/* Menu Panel */}
-              <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 25 }}
-                className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl"
-              >
-                <div className="p-6 h-full overflow-y-auto">
-                  {/* Header */}
-                  <div className="flex justify-between items-center mb-8">
-                    <Link to="/" className="flex items-center space-x-3" onClick={() => setMobileMenuOpen(false)}>
-                      <Logo />
-                    </Link>
-                    <button
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-                    >
-                      <FaTimes className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-                    </button>
-                  </div>
-
-                  {/* User Info */}
-                  {user && (
-                    <div className="mb-6 p-4 bg-linear-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-xl">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500">
-                          <img
-                            src={user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User") + "&background=amber-500&color=fff"}
-                            alt={user.displayName || "User"}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-gray-900 dark:text-white">{user.displayName}</h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            {isPremium && (
-                              <div className="flex items-center gap-1">
-                                <FaCrown className="w-3 h-3 text-amber-500" />
-                                <span className="text-xs font-bold text-amber-600">Premium</span>
-                              </div>
-                            )}
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              userData?.role === 'staff' 
-                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                : userData?.role === 'admin'
-                                ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                            }`}>
-                              {userData?.role?.toUpperCase() || 'USER'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Mobile Links */}
-                  <ul className="space-y-1">
-                    {links.map((link) => (
-                      <li key={link.label}>
-                        {link.submenu ? (
-                          <>
-                            <div className="px-4 py-3 font-medium text-gray-900 dark:text-white flex items-center justify-between">
-                              <span className="flex items-center space-x-3">
-                                {link.icon}
-                                <span>{link.label}</span>
-                              </span>
-                              <FaChevronDown className="w-3 h-3" />
-                            </div>
-                            <div className="pl-8 space-y-1">
-                              {link.submenu.map((item) => (
-                                <NavLink
-                                  key={item.label}
-                                  to={item.to}
-                                  className={({ isActive }) => `block px-4 py-2.5 rounded-lg ${
-                                    isActive 
-                                      ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-gray-800' 
-                                      : 'text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400'
-                                  }`}
-                                  onClick={() => setMobileMenuOpen(false)}
-                                >
-                                  {item.label}
-                                </NavLink>
-                              ))}
-                            </div>
-                          </>
-                        ) : (
-                          <NavLink
-                            to={link.to}
-                            className={({ isActive }) => `flex items-center space-x-3 px-4 py-3 rounded-lg font-medium ${
-                              isActive 
-                                ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white' 
-                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                            }`}
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            {link.icon}
-                            <span>{link.label}</span>
-                          </NavLink>
-                        )}
-                      </li>
-                    ))}
-                    
-                    {userLinks.map((link) => (
-                      <li key={link.label}>
-                        <NavLink
-                          to={link.to}
-                          className={({ isActive }) => `flex items-center space-x-3 px-4 py-3 rounded-lg font-medium ${
-                            isActive 
-                              ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white' 
-                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                          }`}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {link.icon}
-                          <span>{link.label}</span>
-                        </NavLink>
-                      </li>
-                    ))}
-
-                    {/* Staff links for mobile */}
-                    {user && userData?.role === 'staff' && (
-                      <li>
-                        <NavLink
-                          to="/addIssues"
-                          className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <FaClipboardList className="w-4 h-4" />
-                          <span>Assigned Issues</span>
-                        </NavLink>
-                      </li>
-                    )}
-
-                    {/* Premium Link for mobile */}
-                    {user && !isPremium && (
-                      <li>
-                        <NavLink
-                          to="/premium"
-                          className="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium bg-linear-to-r from-amber-500 to-yellow-500 text-white"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <FaCrown className="w-4 h-4" />
-                          <span>Go Premium</span>
-                        </NavLink>
-                      </li>
-                    )}
-                  </ul>
-
-                  {/* Auth Buttons for Mobile */}
-                  {!user && (
-                    <div className="mt-8 space-y-3">
-                      <Link
-                        to="/login"
-                        className="block w-full px-4 py-3 text-center font-medium border rounded-2xl bg-amber-500 dark:bg-amber-200 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800  transition-colors"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Login
-                      </Link>
-                      <Link
-                        to="/register"
-                        className="block w-full px-4 py-3 bg-linear-to-r from-amber-500 to-orange-500 text-white font-medium rounded-lg text-center hover:from-amber-600 hover:to-orange-600 transition-all duration-300"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Create Account
-                      </Link>
-                    </div>
-                  )}
-
-                  {/* Logout Button */}
-                  {user && (
-                    <button
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        handleLogOut();
-                      }}
-                      className="w-full mt-8 px-4 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors flex items-center justify-center space-x-2"
-                    >
-                      <FaSignOutAlt className="w-4 h-4" />
-                      <span>Sign Out</span>
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.nav>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+</motion.nav>
 
       {/* Spacer */}
       <div className="h-16"></div>

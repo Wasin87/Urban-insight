@@ -7,6 +7,7 @@ import useAuth from '../../Hooks/useAuth';
 import axios from 'axios';
 import { FaExclamationTriangle, FaCrown } from 'react-icons/fa';
 import { useQuery } from '@tanstack/react-query';
+import Loading from '../Auth/SocialLogin/Loading';
 
 const ReportIssue = () => {
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm();
@@ -208,19 +209,14 @@ const ReportIssue = () => {
     // If loading user data
     if (user && userLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mb-4"></div>
-                    <p className="text-gray-600">Loading...</p>
-                </div>
-            </div>
+        <Loading></Loading>
         );
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10 dark:text-white bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10 dark:text-white bg-amber-100 dark:bg-gray-900">
             <div className="w-full max-w-3xl">
-                <div className="text-center mb-8">
+                <div className="text-center mb-8 mt-5">
                     <h3 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">
                         Report an Issue
                     </h3>
@@ -288,7 +284,7 @@ const ReportIssue = () => {
                 {/* Form */}
                 <form
                     onSubmit={handleSubmit(handleReportIssue)}
-                    className="mt-4 p-6 border bg-white dark:bg-gray-800 dark:border-gray-600 shadow-xl rounded-xl"
+                    className="mt-4 p-6 border bg-amber-50 dark:bg-gray-800 dark:border-gray-600 shadow-xl rounded-xl"
                     encType="multipart/form-data"
                 >
                     {/* Title */}

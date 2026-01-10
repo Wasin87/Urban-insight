@@ -32,11 +32,11 @@ const Coverage = () => {
     };
 
     return (
-        <div className="py-10">
+        <div className="py-10 mt-8 bg-amber-100">
             {/* Title Section */}
             <div className="text-center mb-10 space-y-3">
                 <h2 className="text-5xl font-extrabold text-gray-800 dark:text-white">
-                    Nationwide Coverage Across <span className="text-secondary">64 Districts</span>
+                    Nationwide Coverage Across <span className="text-amber-500">64 Districts</span>
                 </h2>
                 <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
                   Urban Insight identifies key public infrastructure issues across Bangladesh using data-driven insights.
@@ -75,7 +75,7 @@ const Coverage = () => {
                     />
 
                     <button
-                        className="bg-lime-600 hover:bg-secondary/90 text-white font-semibold px-5 py-2 rounded-xl transition-all"
+                        className="bg-amber-500 hover:bg-secondary/90 text-white font-semibold px-5 py-2 rounded-xl transition-all"
                     >
                         Search
                     </button>

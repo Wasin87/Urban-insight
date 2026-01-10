@@ -145,7 +145,7 @@ const Premium = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
+        <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12">
@@ -153,7 +153,7 @@ const Premium = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white mb-6"
+                        className="flex items-center gap-2 text-gray-900 dark:text-gray-900 hover:text-gray-800 dark:hover:text-white bg-amber-400  px-3 py-2 rounded-2xl mb-6"
                     >
                         <FaArrowLeft />
                         Back

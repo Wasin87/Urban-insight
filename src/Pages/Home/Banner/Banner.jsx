@@ -6,6 +6,11 @@ import banner2 from '../../../assets/banner/Blue and Green 2.jpg';
 import banner3 from '../../../assets/banner/Blue and Green 3.png';
 import banner4 from '../../../assets/banner/Blue and Green 4.png';
 import { Link } from 'react-router';
+ 
+import { MdKeyboardDoubleArrowDown } from 'react-icons/md';
+
+
+
 
 const Banner = () => {
     const images = [banner1, banner2, banner3, banner4];
@@ -38,7 +43,7 @@ const Banner = () => {
 
                         {/* Text Content */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 animate-fadeIn">
-                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 text-amber-400 drop-shadow-lg animate-slideDown">
+                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold mt-40 mb-2 text-amber-400 drop-shadow-lg animate-slideDown">
                                 Public Infrastructure Issue Reporting System
                             </h2>
                             <p className="text-sm md:text-lg lg:text-xl mb-4 opacity-90 animate-slideUp">
@@ -47,6 +52,9 @@ const Banner = () => {
                             <Link to="/allIssues" className="px-6 py-3 bg-amber-400 text-black rounded-full font-semibold shadow-lg hover:scale-105 transition-transform duration-300 animate-bounce">
                                 View all reports
                             </Link>
+                            <p className=' mb-30 md:mt-20'>
+                                <small className="mt-2  text-3xl block text-amber-300 italic opacity-80 rounded-full font-semibold shadow-lg hover:scale-105 transition-transform duration-300 animate-bounce border-2 border-amber-300  px-3 py-2"><span className='text-sm text-amber-200'>Scroll</span><MdKeyboardDoubleArrowDown /></small>
+                            </p>
                         </div>
 
                         {/* Optional Floating Particles */}

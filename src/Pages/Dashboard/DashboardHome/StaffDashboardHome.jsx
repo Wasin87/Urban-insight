@@ -26,6 +26,7 @@ import {
   MdBarChart
 } from 'react-icons/md';
 import { motion } from 'framer-motion';
+import Loading from '../../Auth/SocialLogin/Loading';
 
 const StaffDashboardHome = () => {
     const { user } = useAuth();
@@ -140,27 +141,22 @@ const StaffDashboardHome = () => {
     // Loading state
     if (issuesLoading || allIssuesLoading || usersLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading dashboard...</p>
-                </div>
-            </div>
+            <Loading></Loading>
         );
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
+        <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
             {/* Header */}
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                            <MdDashboard className="text-blue-600 dark:text-blue-400" />
+                            <MdDashboard className="text-amber-600 dark:text-amber-400" />
                             Staff Dashboard
                         </h1>
                         <p className="text-gray-600 dark:text-gray-400 mt-2">
-                            Welcome back, <span className="font-semibold text-blue-600 dark:text-blue-400">{user?.displayName || 'Staff Member'}</span>
+                            Welcome back, <span className="font-semibold text-amber-600 dark:text-amber-400">{user?.displayName || 'Staff Member'}</span>
                         </p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg">
@@ -269,7 +265,7 @@ const StaffDashboardHome = () => {
                 <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <FaChartPie className="text-blue-600 dark:text-blue-400" />
+                            <FaChartPie className="text-amber-600 dark:text-amber-400" />
                             Issue Status Distribution
                         </h2>
                         <span className="text-sm text-gray-500 dark:text-gray-400">Last 30 days</span>
@@ -338,17 +334,17 @@ const StaffDashboardHome = () => {
                     </h2>
                     
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg">
-                                    <FaChartLine className="text-blue-600 dark:text-blue-400" />
+                                <div className="p-2 bg-amber-100 dark:bg-amber-800 rounded-lg">
+                                    <FaChartLine className="text-amber-600 dark:text-amber-400" />
                                 </div>
                                 <div>
                                     <p className="font-medium text-gray-900 dark:text-white">Success Rate</p>
                                     <p className="text-sm text-gray-500 dark:text-gray-400">Issue resolution</p>
                                 </div>
                             </div>
-                            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                                 {stats.successRate}%
                             </span>
                         </div>
@@ -387,34 +383,34 @@ const StaffDashboardHome = () => {
             </div>
 
             {/* Recent Activities and Issue Types */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 " >
                 {/* Recent Activities */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <FaHistory className="text-blue-600 dark:text-blue-400" />
+                            <FaHistory className="text-amber-600 dark:text-amber-400" />
                             Recent Activities
                         </h2>
-                        <button className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                        <button className="text-sm text-amber-600 dark:text-amber-400 hover:underline">
                             View All
                         </button>
                     </div>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-4 overflow-x-auto">
                         {stats.recentActivities.length > 0 ? (
                             stats.recentActivities.map((activity, index) => (
                                 <div key={activity.id} className="flex items-center gap-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors">
                                     <div className={`p-2 rounded-full ${
                                         activity.status === 'resolved' ? 'bg-green-100 dark:bg-green-900/30' :
                                         activity.status === 'in-progress' ? 'bg-amber-100 dark:bg-amber-900/30' :
-                                        'bg-blue-100 dark:bg-blue-900/30'
+                                        'bg-amber-100 dark:bg-amber-900/30'
                                     }`}>
                                         {activity.status === 'resolved' ? (
                                             <FaCheckCircle className="text-green-600 dark:text-green-400" />
                                         ) : activity.status === 'in-progress' ? (
                                             <FaClock className="text-amber-600 dark:text-amber-400" />
                                         ) : (
-                                            <MdAssignment className="text-blue-600 dark:text-blue-400" />
+                                            <MdAssignment className="text-amber-600 dark:text-amber-400" />
                                         )}
                                     </div>
                                     <div className="flex-1">
@@ -483,7 +479,7 @@ const StaffDashboardHome = () => {
                                         </div>
                                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                             <div 
-                                                className="bg-linear-to-r from-blue-500 to-blue-600 h-2 rounded-full"
+                                                className="bg-linear-to-r from-amber-500 to-amber-600 h-2 rounded-full"
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>
@@ -541,14 +537,14 @@ const StaffDashboardHome = () => {
             {/* Timeline Visualization (Optional Enhancement) */}
             <div className="mt-8">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <MdTimeline className="text-blue-600 dark:text-blue-400" />
+                    <MdTimeline className="text-amber-600 dark:text-amber-400" />
                     Assignment Timeline
                 </h3>
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
                     <div className="flex items-center justify-center h-40">
                         <div className="text-center">
-                            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
-                                <FaChartLine className="text-2xl text-blue-600 dark:text-blue-400" />
+                            <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full mb-4">
+                                <FaChartLine className="text-2xl text-amber-600 dark:text-amber-400" />
                             </div>
                             <p className="text-gray-500 dark:text-gray-400">
                                 Timeline visualization shows your assignment history

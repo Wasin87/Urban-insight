@@ -29,6 +29,13 @@ import IssueDetails from "../Pages/IssueDetails/IssueDetails";
 import AboutUs from "../Pages/AboutUs/AboutUs";
 import Premium from "../Pages/Premium/Premium";
 import PremiumSuccess from "../Pages/Premium/PremiumSuccess";
+import Loading from "../Pages/Auth/SocialLogin/Loading";
+import { Suspense } from "react";
+import FAQ from "../Pages/FAQ/FAQ";
+import Privacy from "../Pages/Privacy/Privacy";
+import Contact from "../Pages/Contact/Contact";
+import Terms from "../Pages/Terms/Terms";
+ 
  
  
  
@@ -37,10 +44,15 @@ import PremiumSuccess from "../Pages/Premium/PremiumSuccess";
   {
     path: "/",
     Component: RootLayout,
+    
     children: [
         {
             index: true,
-            Component: Home
+        element: (
+          <Suspense fallback={<Loading/>}>
+            <Home />
+          </Suspense>
+        ),
         },
  
         {
@@ -51,9 +63,25 @@ import PremiumSuccess from "../Pages/Premium/PremiumSuccess";
     path: "premium-success",
     element: <PremiumSuccess />   
 },
+{
+    path: "faq",
+    element: <FAQ />   
+},
+{
+    path: "privacy",
+    element: <Privacy />   
+},
+{
+    path: "contact",
+    element: <Contact></Contact>   
+},
+{
+    path: "terms",
+    element: <Terms></Terms>   
+},
         {
             path: 'allIssues',
-            element: <PrivetRoute><AllIssues></AllIssues></PrivetRoute>
+            element: <AllIssues></AllIssues>
         },
         {
           path:"issueDetails/:id",

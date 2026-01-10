@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
 import { 
@@ -15,12 +15,21 @@ import {
 import { FiShieldOff, FiUsers } from 'react-icons/fi';
 import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import Swal from 'sweetalert2';
+import Loading from '../../Auth/SocialLogin/Loading';
 
 const UsersManagement = () => {
     const axiosSecure = useAxiosSecure();
+      const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "winter");
     const [searchText, setSearchText] = useState('');
     const [darkMode, setDarkMode] = useState(false);
     const [selectedRole, setSelectedRole] = useState('all');
+
+      // Theme management
+      useEffect(() => {
+        const html = document.documentElement;
+        html.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+      }, [theme]);
 
     // Toggle dark mode
     React.useEffect(() => {
@@ -80,8 +89,8 @@ const UsersManagement = () => {
             cancelButtonText: "Cancel",
             confirmButtonColor: "#10b981",
             cancelButtonColor: "#6b7280",
-            background: darkMode ? "#1f2937" : "#ffffff",
-            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
         }).then((result) => {
             if (result.isConfirmed) {
                 const roleInfo = { role: 'admin' };
@@ -95,8 +104,8 @@ const UsersManagement = () => {
                                 title: `${user.displayName} is now an Admin`,
                                 showConfirmButton: false,
                                 timer: 1800,
-                                background: darkMode ? "#1f2937" : "#ffffff",
-                                color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
                             });
                         }
                     })
@@ -105,8 +114,8 @@ const UsersManagement = () => {
                             icon: 'error',
                             title: 'Failed',
                             text: error.message,
-                            background: darkMode ? "#1f2937" : "#ffffff",
-                            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
                         });
                     });
             }
@@ -126,8 +135,8 @@ const UsersManagement = () => {
             cancelButtonText: "Cancel",
             confirmButtonColor: "#3b82f6",
             cancelButtonColor: "#6b7280",
-            background: darkMode ? "#1f2937" : "#ffffff",
-            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
         }).then((result) => {
             if (result.isConfirmed) {
                 const roleInfo = { role: 'staff' };
@@ -151,8 +160,8 @@ const UsersManagement = () => {
                             icon: 'error',
                             title: 'Failed',
                             text: error.message,
-                            background: darkMode ? "#1f2937" : "#ffffff",
-                            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
                         });
                     });
             }
@@ -172,8 +181,8 @@ const UsersManagement = () => {
             cancelButtonText: "Cancel",
             confirmButtonColor: "#ef4444",
             cancelButtonColor: "#6b7280",
-            background: darkMode ? "#1f2937" : "#ffffff",
-            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
         }).then((result) => {
             if (result.isConfirmed) {
                 const roleInfo = { role: 'user' };
@@ -187,8 +196,8 @@ const UsersManagement = () => {
                                 text: `${user.displayName} is now a regular user`,
                                 timer: 1800,
                                 showConfirmButton: false,
-                                background: darkMode ? "#1f2937" : "#ffffff",
-                                color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
                             });
                         }
                     })
@@ -197,8 +206,8 @@ const UsersManagement = () => {
                             icon: 'error',
                             title: 'Failed',
                             text: error.message,
-                            background: darkMode ? "#1f2937" : "#ffffff",
-                            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
                         });
                     });
             }
@@ -218,8 +227,8 @@ const UsersManagement = () => {
             cancelButtonText: "Cancel",
             confirmButtonColor: "#f97316",
             cancelButtonColor: "#6b7280",
-            background: darkMode ? "#1f2937" : "#ffffff",
-            color: darkMode ? "#ffffff" : "#000000"
+            background: theme === "night" ? "#1f2937" : "#ffffff",
+            color: theme === "night" ? "#ffffff" : "#111827"
         }).then((result) => {
             if (result.isConfirmed) {
                 const roleInfo = { role: 'rejected' };
@@ -233,8 +242,8 @@ const UsersManagement = () => {
                                 text: `${user.displayName} has been rejected`,
                                 timer: 1800,
                                 showConfirmButton: false,
-                                background: darkMode ? "#1f2937" : "#ffffff",
-                                color: darkMode ? "#ffffff" : "#000000"
+                                background: theme === "night" ? "#1f2937" : "#ffffff",
+                                color: theme === "night" ? "#ffffff" : "#111827"
                             });
                         }
                     })
@@ -243,8 +252,8 @@ const UsersManagement = () => {
                             icon: 'error',
                             title: 'Failed',
                             text: error.message,
-                            background: darkMode ? "#1f2937" : "#ffffff",
-                            color: darkMode ? "#ffffff" : "#000000"
+                            background: theme === "night" ? "#1f2937" : "#ffffff",
+                            color: theme === "night" ? "#ffffff" : "#111827"
                         });
                     });
             }
@@ -264,8 +273,8 @@ const UsersManagement = () => {
             cancelButtonText: "Cancel",
             confirmButtonColor: "#dc2626",
             cancelButtonColor: "#6b7280",
-            background: darkMode ? "#1f2937" : "#ffffff",
-            color: darkMode ? "#ffffff" : "#000000"
+            background: theme === "night" ? "#1f2937" : "#ffffff",
+            color: theme === "night" ? "#ffffff" : "#111827"
         }).then((result) => {
             if (result.isConfirmed) {
                 const roleInfo = { role: 'blocked' };
@@ -279,8 +288,8 @@ const UsersManagement = () => {
                                 text: `${user.displayName} has been blocked`,
                                 timer: 1800,
                                 showConfirmButton: false,
-                                background: darkMode ? "#1f2937" : "#ffffff",
-                                color: darkMode ? "#ffffff" : "#000000"
+                                background: theme === "night" ? "#1f2937" : "#ffffff",
+                                color: theme === "night" ? "#ffffff" : "#111827"
                             });
                         }
                     })
@@ -289,8 +298,8 @@ const UsersManagement = () => {
                             icon: 'error',
                             title: 'Failed',
                             text: error.message,
-                            background: darkMode ? "#1f2937" : "#ffffff",
-                            color: darkMode ? "#ffffff" : "#000000"
+                                    background: darkMode ? "#1f2937" : "#ffffff",
+                                    color: darkMode ? "#ffffff" : "#000000"
                         });
                     });
             }
@@ -310,8 +319,8 @@ const UsersManagement = () => {
             cancelButtonText: "Cancel",
             confirmButtonColor: "#10b981",
             cancelButtonColor: "#6b7280",
-            background: darkMode ? "#1f2937" : "#ffffff",
-            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
         }).then((result) => {
             if (result.isConfirmed) {
                 const roleInfo = { role: 'user' };
@@ -325,8 +334,8 @@ const UsersManagement = () => {
                                 text: `${user.displayName} has been restored`,
                                 timer: 1800,
                                 showConfirmButton: false,
-                                background: darkMode ? "#1f2937" : "#ffffff",
-                                color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
                             });
                         }
                     })
@@ -335,8 +344,8 @@ const UsersManagement = () => {
                             icon: 'error',
                             title: 'Failed',
                             text: error.message,
-                            background: darkMode ? "#1f2937" : "#ffffff",
-                            color: darkMode ? "#ffffff" : "#000000"
+      background: theme === "night" ? "#1f2937" : "#ffffff",
+      color: theme === "night" ? "#ffffff" : "#111827",
                         });
                     });
             }
@@ -380,12 +389,7 @@ const UsersManagement = () => {
     // Loading state
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 dark:border-blue-800 dark:border-t-blue-400 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading users...</p>
-                </div>
-            </div>
+            <Loading></Loading>
         );
     }
 
