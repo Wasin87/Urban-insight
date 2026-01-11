@@ -367,7 +367,7 @@ const UserDashboardHome = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+                    className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
                 >
                     {/* Total Issues */}
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
@@ -586,7 +586,7 @@ const UserDashboardHome = () => {
                                 </span>
                             </div>
 
-                            <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                            <div className="space-y-4 max-h-[500px] overflow-x-auto md:overflow-y-auto pr-2">
                                 {recentActivity.length === 0 ? (
                                     <div className="text-center py-8">
                                         <FaHistory className="text-4xl text-gray-400 dark:text-gray-600 mx-auto mb-4" />

@@ -134,7 +134,7 @@ const Privacy = () => {
         { id: 'cookies', title: 'Cookies', icon: <FaCookie /> },
         { id: 'children', title: "Children's Privacy", icon: <FaUserShield /> },
         { id: 'changes', title: 'Policy Changes', icon: <FaHistory /> },
-        { id: 'contact', title: 'Contact Us', icon: <FaEnvelope /> },
+        
     ];
 
     const scrollToSection = (sectionId) => {

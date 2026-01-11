@@ -390,7 +390,7 @@ const AboutUs = () => {
       {/* Team/Developer Section */}
       <motion.section 
         variants={containerVariants}
-        className="py-24 px-4 sm:px-6 lg:px-8 bg-amber-100"
+        className="py-24 px-4 sm:px-6 lg:px-8 bg-amber-100 dark:bg-gray-800"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div 

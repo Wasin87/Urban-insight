@@ -1,186 +1,324 @@
 import { createBrowserRouter } from "react-router";
+import { lazy, Suspense } from "react";
 import RootLayout from "../Layout/RootLayout";
-import Home from "../Pages/Home/Home/Home";
-import Coverage from "../Pages/Coverage/Coverage";
 import AuthLayout from "../Layout/AuthLayout";
-import Login from "../Pages/Auth/Login";
-import Register from "../Pages/Auth/Register";
-import PrivetRoute from "./PrivetRoute";
- 
-import ReportIssue from "../Pages/ReportIssue/ReportIssue";
 import DashboardLayout from "../Layout/DashboardLayout";
-import MyIssues from "../Pages/Dashboard/MyIssues/MyIssues";
-import Payment from "../Pages/Payment/Payment";
-import PaymentSuccess from "../Pages/Payment/PaymentSuccess";
-import PaymentCancel from "../Pages/Payment/PaymentCancel";
-import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
- 
-import UsersManagement from "../Pages/Dashboard/UsersManagement/UsersManagement";
+import PrivetRoute from "./PrivetRoute";
 import AdminRoute from "./AdminRoute";
-import AssignStaffs from "../Pages/Dashboard/AssignStaffs/AssignStaffs";
 import StaffRoute from "./StaffRoute";
-import ManageIssues from "../Pages/Dashboard/ManageIssues/ManageIssues";
- 
- 
-import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
- 
-import AllIssues from "../Pages/AllIssues/AllIssues";
-import IssueDetails from "../Pages/IssueDetails/IssueDetails";
-import AboutUs from "../Pages/AboutUs/AboutUs";
-import Premium from "../Pages/Premium/Premium";
-import PremiumSuccess from "../Pages/Premium/PremiumSuccess";
 import Loading from "../Pages/Auth/SocialLogin/Loading";
-import { Suspense } from "react";
-import FAQ from "../Pages/FAQ/FAQ";
-import Privacy from "../Pages/Privacy/Privacy";
-import Contact from "../Pages/Contact/Contact";
-import Terms from "../Pages/Terms/Terms";
- 
- 
- 
- 
- 
- export const router = createBrowserRouter([
+
+// Lazy load components for better performance
+const Home = lazy(() => import("../Pages/Home/Home/Home"));
+const Coverage = lazy(() => import("../Pages/Coverage/Coverage"));
+const Login = lazy(() => import("../Pages/Auth/Login"));
+const Register = lazy(() => import("../Pages/Auth/Register"));
+const ReportIssue = lazy(() => import("../Pages/ReportIssue/ReportIssue"));
+const MyIssues = lazy(() => import("../Pages/Dashboard/MyIssues/MyIssues"));
+const Payment = lazy(() => import("../Pages/Payment/Payment"));
+const PaymentSuccess = lazy(() => import("../Pages/Payment/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("../Pages/Payment/PaymentCancel"));
+const PaymentHistory = lazy(() => import("../Pages/Dashboard/PaymentHistory/PaymentHistory"));
+const UsersManagement = lazy(() => import("../Pages/Dashboard/UsersManagement/UsersManagement"));
+const AssignStaffs = lazy(() => import("../Pages/Dashboard/AssignStaffs/AssignStaffs"));
+const ManageIssues = lazy(() => import("../Pages/Dashboard/ManageIssues/ManageIssues"));
+const DashboardHome = lazy(() => import("../Pages/Dashboard/DashboardHome/DashboardHome"));
+const AllIssues = lazy(() => import("../Pages/AllIssues/AllIssues"));
+const IssueDetails = lazy(() => import("../Pages/IssueDetails/IssueDetails"));
+const AboutUs = lazy(() => import("../Pages/AboutUs/AboutUs"));
+const Premium = lazy(() => import("../Pages/Premium/Premium"));
+const PremiumSuccess = lazy(() => import("../Pages/Premium/PremiumSuccess"));
+const FAQ = lazy(() => import("../Pages/FAQ/FAQ"));
+const Privacy = lazy(() => import("../Pages/Privacy/Privacy"));
+const Contact = lazy(() => import("../Pages/Contact/Contact"));
+const Terms = lazy(() => import("../Pages/Terms/Terms"));
+const Profile = lazy(() => import("../Pages/Profile/Profile"));
+
+// Professional Loading Component
+const ProfessionalLoading = () => {
+  return (
+       <Loading></Loading>
+  );
+};
+
+// Data Loader for service centers
+const serviceCentersLoader = async () => {
+  // Simulate network delay for demonstration
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  try {
+    const response = await fetch('/serviceCenters.json');
+    if (!response.ok) {
+      throw new Error('Failed to load service centers');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Loader error:', error);
+    throw error;
+  }
+};
+
+export const router = createBrowserRouter([
   {
     path: "/",
-    Component: RootLayout,
-    
+    element: (
+      <Suspense fallback={<ProfessionalLoading />}>
+        <RootLayout />
+      </Suspense>
+    ),
     children: [
-        {
-            index: true,
+      {
+        index: true,
         element: (
-          <Suspense fallback={<Loading/>}>
+          <Suspense fallback={<ProfessionalLoading />}>
             <Home />
           </Suspense>
         ),
-        },
- 
-        {
-    path: "premium",
-    element: <Premium />   
-},
-{
-    path: "premium-success",
-    element: <PremiumSuccess />   
-},
-{
-    path: "faq",
-    element: <FAQ />   
-},
-{
-    path: "privacy",
-    element: <Privacy />   
-},
-{
-    path: "contact",
-    element: <Contact></Contact>   
-},
-{
-    path: "terms",
-    element: <Terms></Terms>   
-},
-        {
-            path: 'allIssues',
-            element: <AllIssues></AllIssues>
-        },
-        {
-          path:"issueDetails/:id",
-          element:<PrivetRoute><IssueDetails></IssueDetails></PrivetRoute>
-        },
-        {
-            path: 'addIssues',
-            element: <PrivetRoute> <ReportIssue></ReportIssue> </PrivetRoute>,
-             loader: () => fetch('/serviceCenters.json')
-            .then(res => res.json())
-        },
-        {
-            path:'coverage',
-            Component: Coverage,
-            loader: () => fetch('/serviceCenters.json')
-            .then(res => res.json())
-        },
-        {
-            path:'aboutUs',
-            Component: AboutUs,
-             
-        }
-    ]
-
-  },
-  {
-    path: '/',
-    Component: AuthLayout,
-    children:[
-      {
-        path:'login',
-        Component: Login
       },
       {
-        path:'register',
-        Component: Register
-      }
-    ]
+        path: "premium",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Premium />
+          </Suspense>
+        ),
+      },
+      {
+        path: "premium-success",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <PremiumSuccess />
+          </Suspense>
+        ),
+      },
+      {
+        path: "faq",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <FAQ />
+          </Suspense>
+        ),
+      },
+      {
+        path: "privacy",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Privacy />
+          </Suspense>
+        ),
+      },
+      {
+        path: "contact",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Contact />
+          </Suspense>
+        ),
+      },
+      {
+        path: "terms",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Terms />
+          </Suspense>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Profile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "allIssues",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <AllIssues />
+          </Suspense>
+        ),
+      },
+      {
+        path: "issueDetails/:id",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <PrivetRoute>
+              <IssueDetails />
+            </PrivetRoute>
+          </Suspense>
+        ),
+      },
+      {
+        path: "addIssues",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <PrivetRoute>
+              <ReportIssue />
+            </PrivetRoute>
+          </Suspense>
+        ),
+        loader: serviceCentersLoader,
+      },
+      {
+        path: "coverage",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Coverage />
+          </Suspense>
+        ),
+        loader: serviceCentersLoader,
+      },
+      {
+        path: "aboutUs",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <AboutUs />
+          </Suspense>
+        ),
+      },
+    ],
   },
-
   {
-    path: 'dashboard',
-    element: <PrivetRoute><DashboardLayout></DashboardLayout></PrivetRoute>,
+    path: "/",
+    element: (
+      <Suspense fallback={<ProfessionalLoading />}>
+        <AuthLayout />
+      </Suspense>
+    ),
     children: [
       {
-          index: true,
-          Component: DashboardHome
+        path: "login",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Login />
+          </Suspense>
+        ),
       },
       {
-          path:"myIssues",
-          Component: MyIssues
+        path: "register",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Register />
+          </Suspense>
+        ),
       },
-              {
-          path:"issueDetails/:id",
-          Component: IssueDetails
-        },
-
+    ],
+  },
+  {
+    path: "dashboard",
+    element: (
+      <Suspense fallback={<ProfessionalLoading />}>
+        <PrivetRoute>
+          <DashboardLayout />
+        </PrivetRoute>
+      </Suspense>
+    ),
+    children: [
       {
-          path:"payment/:issueId",
-          Component: Payment
-      },
-      {
-          path:"payment-history",
-          Component: PaymentHistory
-      },
-      {
-          path:"payment-success",
-          Component: PaymentSuccess
-      },
-      {
-          path:"payment-cancelled",
-          Component: PaymentCancel
-      },
- 
-
-     //rider only routes
-      
-       {
-         path:"manage-issues",
-         element: <StaffRoute><ManageIssues></ManageIssues></StaffRoute>
-       },
- 
-
-
-
-      //Admin only routes
- 
-      {
-          path:"assign-staff",
-          element: <AdminRoute><AssignStaffs></AssignStaffs></AdminRoute>
+        index: true,
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <DashboardHome />
+          </Suspense>
+        ),
       },
       {
-          path:"users-management",
-          element: <AdminRoute><UsersManagement></UsersManagement></AdminRoute>
-      }
-    ]
-  }
-
-
+        path: "myIssues",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <MyIssues />
+          </Suspense>
+        ),
+      },
+      {
+        path: "issueDetails/:id",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <IssueDetails />
+          </Suspense>
+        ),
+      },
+      {
+        path: "payment/:issueId",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <Payment />
+          </Suspense>
+        ),
+      },
+      {
+        path: "payment-history",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <PaymentHistory />
+          </Suspense>
+        ),
+      },
+      {
+        path: "payment-success",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <PaymentSuccess />
+          </Suspense>
+        ),
+      },
+      {
+        path: "payment-cancelled",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <PaymentCancel />
+          </Suspense>
+        ),
+      },
+      // Staff only routes
+      {
+        path: "manage-issues",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <StaffRoute>
+              <ManageIssues />
+            </StaffRoute>
+          </Suspense>
+        ),
+      },
+      // Admin only routes
+      {
+        path: "assign-staff",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <AdminRoute>
+              <AssignStaffs />
+            </AdminRoute>
+          </Suspense>
+        ),
+      },
+      {
+        path: "users-management",
+        element: (
+          <Suspense fallback={<ProfessionalLoading />}>
+            <AdminRoute>
+              <UsersManagement />
+            </AdminRoute>
+          </Suspense>
+        ),
+      },
+    ],
+  },
 ]);
 
+// Add error handling for router
+router.subscribe((state) => {
+  if (state.navigation.state === "loading") {
+    // You can add any global loading state management here
+    console.log("Navigation loading started");
+  }
+  
+  if (state.navigation.state === "idle" && state.navigation.location) {
+    // Navigation completed successfully
+    console.log("Navigation completed to:", state.navigation.location.pathname);
+  }
+});
 
+export default router;

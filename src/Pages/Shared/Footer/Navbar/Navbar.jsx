@@ -387,7 +387,7 @@ const getUserRole = () => {
 
   const links = [
     { to: "/", label: "Home", icon: <FaHome className="" /> },
-    { to: "/allIssues", label: "All Issues", icon: <FaClipboardList className="" /> },
+    { to: "/allIssues", label: "All Issues", icon: <FaClipboardList className="ml-1" /> },
     { 
       label: "Services", 
       icon: <FaCog className="w-4 h-4" />,
@@ -395,13 +395,14 @@ const getUserRole = () => {
         { to: "/addIssues", label: "Add Issues" },
         { to: "/coverage", label: "Coverage Areas" },
         { to: "/aboutUs", label: "About Us" },
+        { to: "/contact", label: "Contact Us" },
       ]
     },
   ];
  
   const userLinks = user ? [
     { to: "/dashboard/myIssues", label: "My Issues", icon: <FaBoxTissue className="w-4 h-4" /> },
-    { to: "/dashboard", label: "Dashboard", icon: <FaTachometerAlt className="w-4 h-4" /> },
+    { to: "/dashboard", label: "Dashboard", icon: <FaTachometerAlt className="w-4 h-4 ml-2" /> },
   ] : [];
 
   return (
@@ -744,7 +745,7 @@ const getUserRole = () => {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={handleThemeToggle}
-                className="p-2 rounded-full bg-linear-to-r from-amber-100 to-orange-100 dark:from-gray-800 dark:to-gray-700 shadow-sm hover:shadow-md transition-all duration-200"
+                className="p-2 hidden md:block rounded-full bg-linear-to-r from-amber-100 to-orange-100 dark:from-gray-800 dark:to-gray-700 shadow-sm hover:shadow-md transition-all duration-200"
                 aria-label="Toggle theme"
               >
                 {theme === "night" ? (
@@ -837,6 +838,14 @@ const getUserRole = () => {
                           >
                             <FaTachometerAlt className="w-4 h-4 mr-3 text-amber-500" />
                             <span>Dashboard</span>
+                          </NavLink>
+                          <NavLink
+                            to="/profile"
+                            className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-gray-700 transition-colors"
+                            onClick={() => setProfileDropdownOpen(false)}
+                          >
+                            <FaTachometerAlt className="w-4 h-4 mr-3 text-amber-500" />
+                            <span>My Profile</span>
                           </NavLink>
 
                           {/* Show different links based on user role */}
@@ -960,6 +969,22 @@ const getUserRole = () => {
             <Link to="/" className="flex items-center space-x-3" onClick={() => setMobileMenuOpen(false)}>
               <Logo />
             </Link>
+
+              {/* Theme Toggle */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={handleThemeToggle}
+                className="p-2 rounded-full bg-linear-to-r from-amber-100 to-orange-100 dark:from-gray-800 dark:to-gray-700 shadow-sm hover:shadow-md transition-all duration-200"
+                aria-label="Toggle theme"
+              >
+                {theme === "night" ? (
+                  <FaSun className="w-5 h-5 text-amber-400 animate-spin-slow" />
+                ) : (
+                  <FaMoon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                )}
+              </motion.button>
+
+            
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -970,6 +995,11 @@ const getUserRole = () => {
             >
               <FaTimes className="w-6 h-6 text-gray-700 dark:text-gray-300" />
             </button>
+
+
+
+
+            
           </div>
 
           {/* Scrollable Content */}

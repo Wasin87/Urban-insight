@@ -201,35 +201,7 @@ const DashboardLayout = () => {
                 )}
               </motion.button>
 
-              {/* Notifications */}
-              <div className="dropdown dropdown-end">
-                <button className={`btn btn-ghost btn-circle relative ${theme === "night" ? "text-gray-300 hover:text-amber-400" : "text-gray-600 hover:text-amber-600"}`}>
-                  <div className="indicator">
-                    <MdOutlineNotifications className="w-5 h-5" />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
-                      3
-                    </span>
-                  </div>
-                </button>
-                <div className={`dropdown-content menu p-4 shadow-2xl ${theme === "night" ? "bg-gray-800" : "bg-white"} rounded-xl w-80 mt-2 border ${theme === "night" ? "border-gray-700" : "border-gray-200"}`}>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className={`font-bold ${theme === "night" ? "text-white" : "text-gray-900"}`}>Notifications</h3>
-                    <span className={`text-xs ${theme === "night" ? "text-amber-400" : "text-amber-600"} cursor-pointer hover:underline`}>
-                      Mark all as read
-                    </span>
-                  </div>
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    <div className={`p-3 rounded-lg border-l-4 border-amber-500 ${theme === "night" ? "bg-gradient-to-r from-gray-700 to-gray-800" : "bg-gradient-to-r from-amber-50 to-amber-100"}`}>
-                      <p className={`font-medium ${theme === "night" ? "text-white" : "text-gray-900"}`}>New issue reported</p>
-                      <p className={`text-sm ${theme === "night" ? "text-gray-400" : "text-gray-600"}`}>Just now</p>
-                    </div>
-                    <div className={`p-3 rounded-lg transition-colors ${theme === "night" ? "hover:bg-gray-750" : "hover:bg-gray-50"}`}>
-                      <p className={`font-medium ${theme === "night" ? "text-white" : "text-gray-900"}`}>Assignment completed</p>
-                      <p className={`text-sm ${theme === "night" ? "text-gray-400" : "text-gray-600"}`}>2 hours ago</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+ 
 
               {/* User Profile */}
               <div className="dropdown dropdown-end">
@@ -295,12 +267,7 @@ const DashboardLayout = () => {
                     </Link>
                   </li>
                   
-                  <li>
-                    <Link to="/settings" className={`py-3 rounded-lg transition-colors ${theme === "night" ? "text-gray-300 hover:text-amber-400 hover:bg-gray-700" : "text-gray-700 hover:text-amber-600 hover:bg-amber-50"}`}>
-                      <FaCog className="text-lg" />
-                      <span>Settings</span>
-                    </Link>
-                  </li>
+ 
                   
                   <li className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                     <button 
@@ -399,11 +366,11 @@ const DashboardLayout = () => {
                     </li>
                     <li>
                       <Link 
-                        to="/help" 
+                        to="/contact" 
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${theme === "night" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-amber-100"}`}
                       >
                         <FaQuestionCircle className="group-hover:scale-110 transition-transform" />
-                        <span>Help & Support</span>
+                        <span>Contact Us</span>
                       </Link>
                     </li>
                   </ul>
@@ -523,12 +490,12 @@ const DashboardLayout = () => {
                 </li>
                 <li>
                   <Link 
-                    to="/help" 
+                    to="/contact" 
                     onClick={closeMobileSidebar}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${theme === "night" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-amber-100"}`}
                   >
                     <FaQuestionCircle className="group-hover:scale-110 transition-transform" />
-                    <span>Help & Support</span>
+                    <span>Contact us</span>
                   </Link>
                 </li>
                 <li>

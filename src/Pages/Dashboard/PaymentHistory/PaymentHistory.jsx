@@ -476,7 +476,7 @@ const PaymentHistory = () => {
                 transition={{ delay: 0.1 }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8"
             >
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 md:p-6 w-80 md:w-full  text-white shadow-lg">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 md:p-6 w-70 md:w-full  text-white shadow-lg">
                     <div className="flex items-center justify-between">
                         <div>
                             <div className="text-xl md:text-2xl lg:text-3xl font-bold">{filteredPayments.length}</div>
@@ -485,7 +485,7 @@ const PaymentHistory = () => {
                         <FaMoneyBillWave className="text-xl md:text-2xl lg:text-3xl opacity-80" />
                     </div>
                 </div>
-                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl p-4 md:p-6 w-80 md:w-full  text-white shadow-lg">
+                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl p-4 md:p-6 w-70 md:w-full  text-white shadow-lg">
                     <div className="flex items-center justify-between">
                         <div>
                             <div className="text-xl md:text-2xl lg:text-3xl font-bold">{formatCurrency(totalSpent)}</div>
@@ -494,7 +494,7 @@ const PaymentHistory = () => {
                         <FaRocket className="text-xl md:text-2xl lg:text-3xl opacity-80" />
                     </div>
                 </div>
-                <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-4 md:p-6 w-80 md:w-full  text-white shadow-lg">
+                <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-4 md:p-6 w-70 md:w-full  text-white shadow-lg">
                     <div className="flex items-center justify-between">
                         <div>
                             <div className="text-xl md:text-2xl lg:text-3xl font-bold">{boostCount}</div>
@@ -503,7 +503,7 @@ const PaymentHistory = () => {
                         <FaCrown className="text-xl md:text-2xl lg:text-3xl opacity-80" />
                     </div>
                 </div>
-                <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-4 md:p-6 w-80 md:w-full  text-white shadow-lg">
+                <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl p-4 md:p-6 w-70 md:w-full  text-white shadow-lg">
                     <div className="flex items-center justify-between">
                         <div>
                             <div className="text-xl md:text-2xl lg:text-3xl font-bold">{premiumCount}</div>
@@ -519,7 +519,7 @@ const PaymentHistory = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-4 md:mb-6 w-80 md:w-full "
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-4 md:mb-6 w-70 md:w-full "
             >
                 <div className="flex flex-col md:flex-row gap-10">
                     {/* Search */}
@@ -532,7 +532,7 @@ const PaymentHistory = () => {
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                            <FaSearch className="absolute left-17 top-149 md:left-35  md:top-98 transform -translate-y-1/2 text-gray-400" />
                         </div>
                     </div>
 
@@ -540,7 +540,7 @@ const PaymentHistory = () => {
                     <div className={`${windowWidth <= 768 && !isMobileMenuOpen ? '' : 'flex'} flex-col md:flex-row gap-3 transition-all duration-300`}>
                         <div className="flex gap-6 md:gap-3">
                             <select
-                                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="flex-1 px-3 md:px-4 py-2 w-18 mb-5 md:mb-1 md:w-full md:py-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 value={filterType}
                                 onChange={(e) => setFilterType(e.target.value)}
                             >
@@ -550,7 +550,7 @@ const PaymentHistory = () => {
                             </select>
 
                             <select
-                                className="flex-1 px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="flex-1 px-3 md:px-4 w-18 mb-5 md:mb-1 md:w-full py-2 md:py-3 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 value={dateFilter}
                                 onChange={(e) => setDateFilter(e.target.value)}
                             >
@@ -633,7 +633,7 @@ const PaymentHistory = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden w-90 md:w-full"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden w-70 md:w-full"
                 ref={tableRef}
             >
                 <div className="overflow-x-auto">

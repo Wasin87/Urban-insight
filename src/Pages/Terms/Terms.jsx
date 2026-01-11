@@ -140,7 +140,7 @@ const Terms = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white dark:from-gray-900 dark:to-gray-800">
             {/* Header */}
-            <div className="bg-white dark:bg-gray-800 shadow-lg">
+            <div className="bg-white dark:bg-gray-800 shadow-lg mt-5">
                 <div className="max-w-7xl mx-auto px-4 py-8">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
@@ -291,7 +291,7 @@ const Terms = () => {
 
                                 {/* Acceptance Section */}
                                 {activeSection === 'overview' && (
-                                    <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-2xl border border-amber-200 dark:border-amber-800">
+                                    <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/80 dark:to-yellow-900/80 rounded-2xl border border-amber-200 dark:border-amber-500">
                                         <div className="text-center">
                                             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                                                 Terms Acceptance
@@ -313,7 +313,7 @@ const Terms = () => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <button
+                                            <Link to="/"
                                                 onClick={handleAccept}
                                                 disabled={!accepted}
                                                 className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${
@@ -323,7 +323,7 @@ const Terms = () => {
                                                 }`}
                                             >
                                                 {accepted ? 'Continue to Platform' : 'Accept Terms to Continue'}
-                                            </button>
+                                            </Link>
                                         </div>
                                     </div>
                                 )}
