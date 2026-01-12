@@ -14,7 +14,9 @@ import {
   FaUserTimes,
   FaHourglassHalf,
   FaTachometerAlt,
-  FaRegMoneyBillAlt
+  FaRegMoneyBillAlt,
+  FaChevronRight,
+  FaExclamationTriangle
 } from 'react-icons/fa';
 import { 
   MdOutlinePayments, 
@@ -206,14 +208,14 @@ const AdminDashboardHome = () => {
     };
 
     return (
-        <div className="p-6 space-y-8 bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-200">
+        <div className="p-6 space-y-8 bg-linear-to-br  from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-200">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ">
                 <div>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
                         Admin Dashboard
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mt-2">
+                    <p className="text-gray-600 dark:text-gray-400 mt-2 w-70 md:w-full">
                         Real-time system statistics and performance overview
                     </p>
                 </div>
@@ -228,7 +230,7 @@ const AdminDashboardHome = () => {
             </div>
 
             {/* Main Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-70 md:w-full">
                 {/* Total Users */}
                 <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-blue-500">
                     <div className="flex items-center justify-between mb-4">
@@ -298,7 +300,7 @@ const AdminDashboardHome = () => {
             </div>
 
             {/* Second Row Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-70 md:w-full">
                 {/* Staff Members */}
                 <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
                     <div className="flex items-center gap-4">
@@ -349,14 +351,14 @@ const AdminDashboardHome = () => {
             </div>
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-70 md:w-full">
                  
                 <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
                         <FaChartLine />
                         Issues Status Distribution
                     </h3>
-                    <div className="h-[300px]">
+                    <div className=" h-[350px] md:h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
@@ -368,6 +370,7 @@ const AdminDashboardHome = () => {
                                     outerRadius={80}
                                     fill="#8884d8"
                                     dataKey="value"
+                                     
                                 >
                                     {pieChartData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -401,12 +404,12 @@ const AdminDashboardHome = () => {
                 </div>
 
                 {/* User Distribution Bar Chart */}
-                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 w-70 md:w-full">
                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
                         <FaUsers />
                         User Distribution by Role
                     </h3>
-                    <div className="h-[300px]">
+                    <div className="h-[350px] md:h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={userRoleData}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.1} />
@@ -445,7 +448,7 @@ const AdminDashboardHome = () => {
             </div>
 
             {/* Revenue Trend Area Chart */}
-            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 w-70 md:w-full">
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
                     <FaRegMoneyBillAlt />
                     30-Day Revenue Trend
@@ -493,7 +496,7 @@ const AdminDashboardHome = () => {
             </div>
 
             {/* Recent Activity Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-70 md:w-full">
                 {/* Recent Payments */}
                 <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
@@ -505,9 +508,9 @@ const AdminDashboardHome = () => {
                             stats.recentPayments.map((payment, index) => (
                                 <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-full ${payment.type === 'premium' ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-purple-100 dark:bg-purple-900/30'}`}>
+                                        <div className={`p-2 rounded-full ${payment.type === 'premium' ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-purple-100 dark:bg-purple-900/30'}`}>
                                             {payment.type === 'premium' ? (
-                                                <FaStar className="text-blue-600 dark:text-blue-400" />
+                                                <FaStar className="text-amber-600 dark:text-amber-400" />
                                             ) : (
                                                 <MdOutlineVerifiedUser className="text-purple-600 dark:text-purple-400" />
                                             )}
@@ -536,72 +539,136 @@ const AdminDashboardHome = () => {
                     </div>
                 </div>
 
-                {/* Recent Issues */}
-                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-                        <FaExclamationCircle />
-                        Recent Issues
-                    </h3>
-                    <div className="space-y-4">
-                        {stats.recentIssues.length > 0 ? (
-                            stats.recentIssues.map((issue, index) => (
-                                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-full ${
-                                            issue.status === 'pending' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
-                                            issue.status === 'assigned' ? 'bg-blue-100 dark:bg-blue-900/30' :
-                                            issue.status === 'in-progress' ? 'bg-indigo-100 dark:bg-indigo-900/30' :
-                                            issue.status === 'resolved' ? 'bg-green-100 dark:bg-green-900/30' :
-                                            'bg-red-100 dark:bg-red-900/30'
-                                        }`}>
-                                            {issue.status === 'pending' ? (
-                                                <MdOutlinePendingActions className="text-yellow-600 dark:text-yellow-400" />
-                                            ) : issue.status === 'assigned' ? (
-                                                <MdOutlineAssignment className="text-blue-600 dark:text-blue-400" />
-                                            ) : issue.status === 'in-progress' ? (
-                                                <FaHourglassHalf className="text-indigo-600 dark:text-indigo-400" />
-                                            ) : issue.status === 'resolved' ? (
-                                                <FaCheckCircle className="text-green-600 dark:text-green-400" />
-                                            ) : (
-                                                <FaUserTimes className="text-red-600 dark:text-red-400" />
-                                            )}
-                                        </div>
-                                        <div className="max-w-xs">
-                                            <p className="font-medium text-gray-800 dark:text-white truncate">
-                                                {issue.issueTitle}
-                                            </p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                {issue.submittedBy}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                            issue.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                                            issue.status === 'assigned' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                                            issue.status === 'in-progress' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300' :
-                                            issue.status === 'resolved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                                            'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                                        }`}>
-                                            {issue.status}
-                                        </span>
-                                        {issue.isBoosted && (
-                                            <span className="ml-2 px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded-full text-xs">
-                                                ⚡ Boosted
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-gray-500 dark:text-gray-400 text-center py-8">No recent issues</p>
-                        )}
+{/* Recent Issues */}
+<div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 md:p-6 w-full">
+    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 md:mb-6 flex items-center gap-2">
+        <FaExclamationCircle />
+        Recent Issues
+    </h3>
+    <div className="space-y-3 md:space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+        {stats.recentIssues.length > 0 ? (
+            stats.recentIssues.map((issue, index) => (
+                <div 
+                    key={index} 
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3 md:p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors gap-3 md:gap-4"
+                >
+                    {/* Left Section - Issue Details */}
+                    <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+                        <div className={`p-2 rounded-full flex-shrink-0 ${
+                            issue.status === 'pending' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
+                            issue.status === 'assigned' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                            issue.status === 'in-progress' ? 'bg-indigo-100 dark:bg-indigo-900/30' :
+                            issue.status === 'resolved' ? 'bg-green-100 dark:bg-green-900/30' :
+                            'bg-red-100 dark:bg-red-900/30'
+                        }`}>
+                            {issue.status === 'pending' ? (
+                                <MdOutlinePendingActions className="text-yellow-600 dark:text-yellow-400 w-4 h-4 md:w-5 md:h-5" />
+                            ) : issue.status === 'assigned' ? (
+                                <MdOutlineAssignment className="text-blue-600 dark:text-blue-400 w-4 h-4 md:w-5 md:h-5" />
+                            ) : issue.status === 'in-progress' ? (
+                                <FaHourglassHalf className="text-indigo-600 dark:text-indigo-400 w-4 h-4 md:w-5 md:h-5" />
+                            ) : issue.status === 'resolved' ? (
+                                <FaCheckCircle className="text-green-600 dark:text-green-400 w-4 h-4 md:w-5 md:h-5" />
+                            ) : (
+                                <FaUserTimes className="text-red-600 dark:text-red-400 w-4 h-4 md:w-5 md:h-5" />
+                            )}
+                        </div>
+                        
+                        <div className="min-w-0 flex-1">
+                            <p className="font-medium text-gray-800 dark:text-white truncate text-sm md:text-base">
+                                {issue.issueTitle}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 truncate">
+                                    {issue.submittedBy}
+                                </p>
+                                {issue.isBoosted && (
+                                    <span className="flex-shrink-0 px-1.5 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded-full text-xs">
+                                        ⚡Boosted
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Section - Status and Actions */}
+                    <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                            issue.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                            issue.status === 'assigned' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                            issue.status === 'in-progress' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300' :
+                            issue.status === 'resolved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                            'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                        }`}>
+                            {issue.status}
+                        </span>
+                        
+     
+                        
+       
                     </div>
                 </div>
+            ))
+        ) : (
+            <div className="flex flex-col items-center justify-center py-8 px-4">
+                <FaExclamationTriangle className="text-gray-400 dark:text-gray-500 text-3xl mb-3" />
+                <p className="text-gray-500 dark:text-gray-400 text-center">No recent issues to display</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 text-center mt-1">Issues will appear here once reported</p>
+            </div>
+        )}
+    </div>
+    
+     
+</div>
+
+<style jsx>{`
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(251, 191, 36, 0.3) transparent;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+        border-radius: 10px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(251, 191, 36, 0.3);
+        border-radius: 10px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(251, 191, 36, 0.5);
+    }
+    
+    /* Mobile-specific styles */
+    @media (max-width: 640px) {
+        .custom-scrollbar {
+            scrollbar-width: none; /* Hide scrollbar on mobile */
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            display: none; /* Hide scrollbar on mobile */
+        }
+        
+        .issue-card {
+            padding: 12px;
+        }
+        
+        .status-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+        }
+    }
+`}</style>
             </div>
 
             {/* System Summary */}
-            <div className="bg-linear-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
+            <div className="bg-linear-to-r from-amber-500 to-amber-600 rounded-xl p-6 text-white w-70 md:w-full">
                 <h3 className="text-xl font-semibold mb-4">System Performance Summary</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="text-center">
@@ -631,7 +698,7 @@ const AdminDashboardHome = () => {
 
             {/* Staff Performance Section */}
             {staffStatsData.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+                <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 w-70 md:w-full">
                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
                         <FaTachometerAlt />
                         Staff Performance Overview

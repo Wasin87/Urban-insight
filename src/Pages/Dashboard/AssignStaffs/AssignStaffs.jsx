@@ -149,7 +149,7 @@ const AssignStaffs = () => {
                 text: 'Please wait while we assign the staff member',
                 allowOutsideClick: false,
                 background: darkMode ? '#1f2937' : '#ffffff',
-                color: darkMode ? '#ffffff' : '#000000',
+                color: darkMode ? '#ffffff' : '#111827',
                 didOpen: () => {
                     Swal.showLoading();
                 }
@@ -196,7 +196,7 @@ const AssignStaffs = () => {
                     confirmButtonText: 'Continue',
                     confirmButtonColor: '#10B981',
                     background: darkMode ? '#1f2937' : '#ffffff',
-                    color: darkMode ? '#ffffff' : '#000000',
+                    color: darkMode ? '#ffffff' : '#111827',
                     timer: 5000
                 });
 
@@ -219,7 +219,7 @@ const AssignStaffs = () => {
                 `,
                 confirmButtonColor: '#EF4444',
                 background: darkMode ? '#1f2937' : '#ffffff',
-                color: darkMode ? '#ffffff' : '#000000'
+                color: darkMode ? '#ffffff' : '#111827'
             });
         }
     };
@@ -253,7 +253,7 @@ const AssignStaffs = () => {
     }
 
     return (
-        <div className="p-4 md:p-6 bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300">
+        <div className="p-4 md:p-6 bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300 w-70 md:w-full">
             {/* Header Section */}
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -263,17 +263,7 @@ const AssignStaffs = () => {
                     </div>
                     
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setDarkMode(!darkMode)}
-                            className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300"
-                            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                        >
-                            {darkMode ? (
-                                <MdLightMode className="text-2xl text-yellow-500" />
-                            ) : (
-                                <MdDarkMode className="text-2xl text-gray-700" />
-                            )}
-                        </button>
+ 
                         
                         <div className="stats shadow bg-white dark:bg-gray-800 border dark:border-gray-700">
                             <div className="stat">

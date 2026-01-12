@@ -310,7 +310,7 @@ const Service = () => {
                                         </div>
                                         {issue.isBoosted && (
                                             <div className="absolute top-3 left-3">
-                                                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-linear-to-r from-yellow-200 to-amber-600 text-white">
+                                                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-linear-to-r from-amber-800 to-amber-400 text-white">
                                                     ⚡ Boosted
                                                 </span>
                                             </div>

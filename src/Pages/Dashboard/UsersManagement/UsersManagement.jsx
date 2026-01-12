@@ -151,7 +151,7 @@ const UsersManagement = () => {
                                 showConfirmButton: false,
                                 timer: 1800,
                                 background: darkMode ? "#1f2937" : "#ffffff",
-                                color: darkMode ? "#ffffff" : "#000000"
+                                color: darkMode ? "#ffffff" : "#111827",
                             });
                         }
                     })
@@ -299,7 +299,7 @@ const UsersManagement = () => {
                             title: 'Failed',
                             text: error.message,
                                     background: darkMode ? "#1f2937" : "#ffffff",
-                                    color: darkMode ? "#ffffff" : "#000000"
+                                    color: darkMode ? "#ffffff" : "#111827"
                         });
                     });
             }
@@ -394,7 +394,7 @@ const UsersManagement = () => {
     }
 
     return (
-        <div className="p-4 md:p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+        <div className="p-4 md:p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300 w-70 md:w-full">
             {/* Header Section */}
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -404,17 +404,7 @@ const UsersManagement = () => {
                     </div>
                     
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setDarkMode(!darkMode)}
-                            className="p-2 rounded-full bg-white dark:bg-gray-800 shadow hover:shadow-lg transition-all duration-300"
-                            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                        >
-                            {darkMode ? (
-                                <MdOutlineLightMode className="text-xl text-yellow-500" />
-                            ) : (
-                                <MdOutlineDarkMode className="text-xl text-gray-700 dark:text-gray-300" />
-                            )}
-                        </button>
+ 
                         
                         <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow">
                             <FiUsers className="text-blue-600 dark:text-blue-400" />
@@ -543,7 +533,7 @@ const UsersManagement = () => {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border dark:border-gray-700 w-65 md:w-full">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-gray-50 dark:bg-gray-700">

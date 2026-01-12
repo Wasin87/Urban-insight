@@ -288,7 +288,7 @@ const StaffDashboardHome = () => {
                                 <div key={status} className="text-center">
                                     <div className="relative w-20 h-20 mx-auto mb-2">
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <span className="text-xl font-bold text-gray-900 dark:text-white">
+                                            <span className="text-xl font-bold text-amber-600 dark:text-amber-400  ">
                                                 {percentage}%
                                             </span>
                                         </div>
@@ -300,7 +300,7 @@ const StaffDashboardHome = () => {
                                                 stroke="currentColor" 
                                                 strokeWidth="10" 
                                                 fill="transparent" 
-                                                className="text-gray-200 dark:text-gray-700"
+                                                className="  text-amber-700"
                                             />
                                             <circle 
                                                 cx="40" 
