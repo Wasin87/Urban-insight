@@ -394,7 +394,7 @@ const UsersManagement = () => {
     }
 
     return (
-        <div className="p-4 md:p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300 w-70 md:w-full">
+        <div className="p-4 md:p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300 ">
             {/* Header Section */}
             <div className="mb-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -414,7 +414,7 @@ const UsersManagement = () => {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6 w-70 md:w-full">
                     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border dark:border-gray-700">
                         <div className="flex items-center justify-between">
                             <div>
@@ -489,7 +489,7 @@ const UsersManagement = () => {
                 </div>
 
                 {/* Search and Filters */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 border dark:border-gray-700">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 border dark:border-gray-700 w-70 md:w-full">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {/* Search Bar */}
                         <div className="md:col-span-2">
@@ -533,7 +533,7 @@ const UsersManagement = () => {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border dark:border-gray-700 w-65 md:w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border dark:border-gray-700 w-70 md:w-full">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-gray-50 dark:bg-gray-700">
@@ -725,7 +725,7 @@ const UsersManagement = () => {
             </div>
 
             {/* Role Legend */}
-            <div className="mt-8 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-xl shadow border dark:border-gray-700">
+            <div className="mt-8 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-xl shadow border dark:border-gray-700 w-70 md:w-full">
                 <h3 className="font-bold text-gray-700 dark:text-white mb-4">Role Legend:</h3>
                 <div className="flex flex-wrap gap-3">
                     <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">

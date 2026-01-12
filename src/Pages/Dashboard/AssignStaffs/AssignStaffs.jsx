@@ -253,10 +253,10 @@ const AssignStaffs = () => {
     }
 
     return (
-        <div className="p-4 md:p-6 bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300 w-70 md:w-full">
+        <div className="p-4 md:p-6 bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300 ">
             {/* Header Section */}
             <div className="mb-8">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 w-70 md:w-full">
                     <div>
                         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Assign Staff to Issues</h1>
                         <p className="text-gray-600 dark:text-gray-400 mt-2">Assign available staff members to pending issues</p>
@@ -279,7 +279,7 @@ const AssignStaffs = () => {
                 </div>
 
                 {/* Filters Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 transition-colors duration-300 border dark:border-gray-700">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 transition-colors duration-300 border dark:border-gray-700 w-70 md:w-full">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Filter Issues</h3>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         {/* Search Input */}
@@ -345,7 +345,7 @@ const AssignStaffs = () => {
             </div>
 
             {/* Issues Table */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8 transition-colors duration-300 border dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8 transition-colors duration-300 border dark:border-gray-700 w-70 md:w-full">
                 <div className="px-4 md:px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
                     <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Pending Issues for Assignment</h2>
                     <p className="text-gray-600 dark:text-gray-400 text-sm">Total: {filteredIssues.length} issues found</p>
