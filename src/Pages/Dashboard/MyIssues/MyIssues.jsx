@@ -296,7 +296,7 @@ const MyIssues = () => {
                 <input
                     type="text"
                     placeholder="Filter by status (pending/resolved/in progress)"
-                    className="px-4 py-2 border rounded-lg w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="px-4 py-2 border rounded-lg w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500"
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                 />

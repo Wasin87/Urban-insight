@@ -1,28 +1,101 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaCrown, FaCheck, FaShieldAlt, FaChartLine, FaStar, FaRocket, FaArrowLeft, FaTimes, FaInfinity, FaUserFriends, FaLockOpen, FaCalendarAlt } from 'react-icons/fa';
+import { FaCrown, FaCheck, FaShieldAlt, FaChartLine, FaStar, FaRocket, FaArrowLeft, FaTimes, FaUserFriends, FaLockOpen, FaCreditCard, FaMobileAlt, FaDesktop, FaSpinner } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
- 
- 
 import Swal from 'sweetalert2';
 import useAuth from '../../Hooks/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const Premium = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
+    const [theme, setTheme] = useState(() => {
+        const storedTheme = localStorage.getItem("theme");
+        return storedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'winter');
+    });
     const axiosSecure = useAxiosSecure();
-    const [loading, setLoading] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState('monthly');
+    const [isMobile, setIsMobile] = useState(false);
 
-    const handlePremiumPayment = async (planType = 'monthly') => {
+    // Theme management
+    useEffect(() => {
+        const html = document.documentElement;
+        html.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        
+        // Also update body class for dark mode compatibility
+        if (theme === 'night') {
+            document.body.classList.add('dark-mode');
+            document.body.classList.remove('light-mode');
+        } else {
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+    }, [theme]);
+
+    // Get SweetAlert theme configuration
+    const getSwalTheme = () => {
+        return theme === 'night' 
+            ? {
+                  background: '#1f2937',
+                  color: '#ffffff',
+                  confirmButtonColor: '#f59e0b',
+                  cancelButtonColor: '#4b5563',
+                  backdrop: 'rgba(0, 0, 0, 0.7)'
+              }
+            : {
+                  background: '#ffffff',
+                  color: '#111827',
+                  confirmButtonColor: '#f59e0b',
+                  cancelButtonColor: '#6b7280',
+                  backdrop: 'rgba(0, 0, 0, 0.4)'
+              };
+    };
+
+    // Detect mobile device
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // SweetAlert custom styles
+    const swalCustomStyles = {
+        customClass: {
+            popup: theme === 'night' ? 'dark-swal' : 'light-swal',
+            title: theme === 'night' ? 'dark-swal-title' : 'light-swal-title',
+            htmlContainer: theme === 'night' ? 'dark-swal-html' : 'light-swal-html',
+            confirmButton: theme === 'night' ? 'dark-swal-confirm' : 'light-swal-confirm',
+            cancelButton: theme === 'night' ? 'dark-swal-cancel' : 'light-swal-cancel',
+            validationMessage: theme === 'night' ? 'dark-swal-validation' : 'light-swal-validation'
+        }
+    };
+
+    const handlePremiumPayment = async (planType = selectedPlan) => {
+        const swalTheme = getSwalTheme();
+        
         if (!user) {
             Swal.fire({
                 title: "Login Required",
                 text: "Please login first to purchase premium",
                 icon: "warning",
+                showCancelButton: true,
                 confirmButtonText: "Go to Login",
-                confirmButtonColor: "#3085d6"
+                cancelButtonText: "Cancel",
+                confirmButtonColor: swalTheme.confirmButtonColor,
+                cancelButtonColor: swalTheme.cancelButtonColor,
+                reverseButtons: true,
+                width: isMobile ? '90%' : '500px',
+                background: swalTheme.background,
+                color: swalTheme.color,
+                backdrop: swalTheme.backdrop,
+                ...swalCustomStyles
             }).then((result) => {
                 if (result.isConfirmed) {
                     navigate('/login', { state: { from: '/premium' } });
@@ -31,38 +104,199 @@ const Premium = () => {
             return;
         }
 
-        setLoading(true);
-        const amount = planType === 'monthly' ? 1000 : 10000; // 1000 monthly, 10000 yearly
+        setProcessing(true);
+        const amount = planType === 'monthly' ? 1000 : 10000;
+        
+        // Show loading state
+        toast.info('Initializing payment...', {
+            position: "top-right",
+            autoClose: 2000,
+            theme: theme === 'night' ? 'dark' : 'light'
+        });
 
         const paymentInfo = {
             amount: amount,
             userEmail: user.email,
             userName: user.displayName || user.email,
+            userId: user.uid,
             type: 'premium',
             plan: planType,
-            description: `Urban Insight Premium ${planType === 'monthly' ? 'Monthly' : 'Yearly'} Plan`
+            currency: 'BDT',
+            description: `Urban Insight Premium ${planType === 'monthly' ? 'Monthly' : 'Yearly'} Plan`,
+            metadata: {
+                userId: user.uid,
+                plan: planType,
+                platform: isMobile ? 'mobile' : 'desktop'
+            }
         };
 
         try {
             const res = await axiosSecure.post('/create-premium-payment', paymentInfo);
             
             if (res.data.success && res.data.url) {
-                toast.success('Redirecting to secure payment...', {
+                toast.success('Redirecting to secure payment gateway...', {
                     position: "top-right",
-                    autoClose: 2000
+                    autoClose: 2000,
+                    theme: theme === 'night' ? 'dark' : 'light'
                 });
 
-                setTimeout(() => {
-                    window.location.href = res.data.url;
-                }, 500);
+                // For better mobile experience
+                if (isMobile) {
+                    // Open in new tab for mobile to avoid navigation issues
+                    window.open(res.data.url, '_blank');
+                    
+                    // Check payment status periodically
+                    const checkPaymentStatus = setInterval(async () => {
+                        try {
+                            const statusRes = await axiosSecure.get(`/payment-status/${user.uid}`);
+                            if (statusRes.data.status === 'succeeded') {
+                                clearInterval(checkPaymentStatus);
+                                toast.success('Payment successful! Redirecting...', {
+                                    theme: theme === 'night' ? 'dark' : 'light'
+                                });
+                                setTimeout(() => {
+                                    navigate('/premium-success');
+                                }, 1500);
+                            }
+                        } catch (error) {
+                            console.error('Status check error:', error);
+                        }
+                    }, 3000);
+
+                    // Clear interval after 5 minutes
+                    setTimeout(() => {
+                        clearInterval(checkPaymentStatus);
+                    }, 300000);
+
+                } else {
+                    // For desktop, redirect directly
+                    setTimeout(() => {
+                        window.location.href = res.data.url;
+                    }, 500);
+                }
             } else {
                 throw new Error(res.data.error || 'Payment failed');
             }
         } catch (error) {
             console.error('Premium Payment Error:', error);
-            toast.error(error.message || 'Failed to initiate payment');
+            
+            // User-friendly error messages
+            let errorMessage = 'Failed to initiate payment';
+            
+            if (error.response?.data?.error?.includes('Network')) {
+                errorMessage = 'Network error. Please check your internet connection.';
+            } else if (error.response?.status === 429) {
+                errorMessage = 'Too many attempts. Please try again in a few minutes.';
+            } else if (error.response?.status === 400) {
+                errorMessage = 'Invalid payment details. Please try again.';
+            }
+            
+            Swal.fire({
+                title: 'Payment Failed',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonColor: swalTheme.confirmButtonColor,
+                confirmButtonText: 'Try Again',
+                width: isMobile ? '90%' : '500px',
+                background: swalTheme.background,
+                color: swalTheme.color,
+                backdrop: swalTheme.backdrop,
+                ...swalCustomStyles
+            });
         } finally {
-            setLoading(false);
+            setProcessing(false);
+        }
+    };
+
+    const handlePaymentMethod = (planType) => {
+        setSelectedPlan(planType);
+        
+        // Show payment method selection for mobile
+        if (isMobile) {
+            const swalTheme = getSwalTheme();
+            
+            Swal.fire({
+                title: 'Choose Payment Method',
+                html: `
+                    <div style="text-align: left;">
+                        <div style="margin-bottom: 16px; padding: 16px; border: 1px solid ${theme === 'night' ? '#4b5563' : '#d1d5db'}; border-radius: 8px; cursor: pointer; background: ${theme === 'night' ? '#374151' : '#ffffff'};" id="card-payment">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; background-color: ${theme === 'night' ? '#92400e30' : '#fef3c7'}; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <svg style="width: 20px; height: 20px; color: ${theme === 'night' ? '#fbbf24' : '#92400e'};" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; margin: 0; color: ${theme === 'night' ? '#ffffff' : '#111827'};">Credit/Debit Card</h4>
+                                    <p style="font-size: 14px; margin: 4px 0 0 0; color: ${theme === 'night' ? '#9ca3af' : '#6b7280'};">Pay with Visa, MasterCard, etc.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 16px; border: 1px solid ${theme === 'night' ? '#4b5563' : '#d1d5db'}; border-radius: 8px; cursor: pointer; background: ${theme === 'night' ? '#374151' : '#ffffff'};" id="mobile-payment">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; background-color: ${theme === 'night' ? '#065f4630' : '#d1fae5'}; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <svg style="width: 20px; height: 20px; color: ${theme === 'night' ? '#a7f3d0' : '#065f46'};" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; margin: 0; color: ${theme === 'night' ? '#ffffff' : '#111827'};">Mobile Banking</h4>
+                                    <p style="font-size: 14px; margin: 4px 0 0 0; color: ${theme === 'night' ? '#9ca3af' : '#6b7280'};">bKash, Nagad, Rocket, etc.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Continue',
+                confirmButtonColor: swalTheme.confirmButtonColor,
+                cancelButtonColor: swalTheme.cancelButtonColor,
+                width: isMobile ? '95%' : '500px',
+                showConfirmButton: false,
+                background: swalTheme.background,
+                color: swalTheme.color,
+                backdrop: swalTheme.backdrop,
+                ...swalCustomStyles,
+                didOpen: () => {
+                    document.getElementById('card-payment').addEventListener('click', () => {
+                        Swal.close();
+                        handlePremiumPayment(planType);
+                    });
+                    
+                    document.getElementById('mobile-payment').addEventListener('click', () => {
+                        Swal.close();
+                        // For mobile banking, show instructions
+                        Swal.fire({
+                            title: 'Mobile Banking Payment',
+                            html: `
+                                <div style="text-align: left; color: ${swalTheme.color};">
+                                    <p style="margin-bottom: 12px;">To pay via mobile banking:</p>
+                                    <ol style="list-style-type: decimal; padding-left: 20px; margin-bottom: 16px; color: ${theme === 'night' ? '#d1d5db' : '#374151'};">
+                                        <li style="margin-bottom: 8px;">Open your mobile banking app</li>
+                                        <li style="margin-bottom: 8px;">Send money to: <strong>017XX-XXXXXX</strong></li>
+                                        <li style="margin-bottom: 8px;">Reference: <strong>URBAN-PREMIUM-${planType.toUpperCase()}</strong></li>
+                                        <li style="margin-bottom: 8px;">Amount: <strong>৳${planType === 'monthly' ? '1,000' : '10,000'}</strong></li>
+                                    </ol>
+                                    <div style="margin-top: 16px; padding: 12px; background-color: ${theme === 'night' ? '#92400e30' : '#fffbeb'}; border: 1px solid ${theme === 'night' ? '#92400e' : '#fde68a'}; border-radius: 8px;">
+                                        <p style="font-size: 14px; color: ${theme === 'night' ? '#fbbf24' : '#92400e'}; margin: 0;">
+                                            After payment, your account will be upgraded within 24 hours.
+                                        </p>
+                                    </div>
+                                </div>
+                            `,
+                            confirmButtonColor: swalTheme.confirmButtonColor,
+                            confirmButtonText: 'I Have Paid',
+                            background: swalTheme.background,
+                            color: swalTheme.color,
+                            ...swalCustomStyles
+                        });
+                    });
+                }
+            });
+        } else {
+            // Direct payment for desktop
+            handlePremiumPayment(planType);
         }
     };
 
@@ -113,6 +347,7 @@ const Premium = () => {
 
     const pricingPlans = [
         {
+            id: 'free',
             name: "Free",
             price: "৳0",
             period: "forever",
@@ -120,49 +355,128 @@ const Premium = () => {
             highlight: false,
             buttonText: "Current Plan",
             disabled: true,
-            icon: "👤"
+            icon: "👤",
+            color: "from-gray-400 to-gray-600"
         },
         {
+            id: 'monthly',
             name: "Monthly",
             price: "৳1,000",
             period: "per month",
             features: ["Unlimited issues", "Priority support", "Advanced analytics", "No ads"],
             highlight: true,
-            buttonText: "Go Premium",
+            buttonText: processing && selectedPlan === 'monthly' ? "Processing..." : "Go Premium",
             saving: "Most Popular",
-            icon: "🚀"
+            icon: "🚀",
+            color: "from-amber-500 to-yellow-500"
         },
         {
+            id: 'yearly',
             name: "Yearly",
             price: "৳10,000",
             period: "per year",
+            originalPrice: "৳12,000",
             features: ["All premium features", "24/7 support", "Early access", "Save 17%"],
             highlight: false,
-            buttonText: "Save 17%",
+            buttonText: processing && selectedPlan === 'yearly' ? "Processing..." : "Save 17%",
             saving: "Save ৳2,000",
-            icon: "👑"
+            icon: "👑",
+            color: "from-purple-500 to-pink-500"
         }
     ];
 
+    // Add CSS for SweetAlert theming
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-swal {
+                background-color: #1f2937 !important;
+                color: #ffffff !important;
+            }
+            .dark-swal-title {
+                color: #ffffff !important;
+            }
+            .dark-swal-html {
+                color: #d1d5db !important;
+            }
+            .dark-swal-confirm {
+                background-color: #f59e0b !important;
+                color: #000000 !important;
+            }
+            .dark-swal-cancel {
+                background-color: #4b5563 !important;
+                color: #ffffff !important;
+            }
+            .dark-swal-validation {
+                color: #f87171 !important;
+            }
+            
+            .light-swal {
+                background-color: #ffffff !important;
+                color: #111827 !important;
+            }
+            .light-swal-title {
+                color: #111827 !important;
+            }
+            .light-swal-html {
+                color: #4b5563 !important;
+            }
+            .light-swal-confirm {
+                background-color: #f59e0b !important;
+                color: #000000 !important;
+            }
+            .light-swal-cancel {
+                background-color: #6b7280 !important;
+                color: #ffffff !important;
+            }
+            .light-swal-validation {
+                color: #dc2626 !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, []);
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800">
+                <div className="text-center">
+                    <div className="relative inline-block">
+                        <FaSpinner className="w-12 h-12 text-amber-500 animate-spin mb-4" />
+                        <FaCrown className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white w-6 h-6" />
+                    </div>
+                    <p className="text-xl font-semibold text-gray-700 dark:text-gray-300 mt-4">
+                        Loading Premium Plans...
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-linear-to-br from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
+        <div className="min-h-screen bg-gradient-to-br mt-5 from-amber-50 to-amber-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
             <div className="max-w-6xl mx-auto">
+ 
+
                 {/* Header */}
                 <div className="text-center mb-12">
                     <motion.button
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 text-gray-900 dark:text-gray-900 hover:text-gray-800 dark:hover:text-white bg-amber-400  px-3 py-2 rounded-2xl mb-6"
+                        className="flex items-center bg-amber-400 p-2 rounded-xl gap-2 text-gray-800 dark:text-gray-900 hover:text-gray-900 dark:hover:text-white mb-6"
                     >
                         <FaArrowLeft />
-                        Back
+                        <span>Back</span>
                     </motion.button>
                     
                     <motion.div
                         initial={{ scale: 0.5, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 bg-linear-to-r from-amber-500 to-yellow-500 rounded-2xl mb-6"
+                        className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-2xl mb-6"
                     >
                         <FaCrown className="text-white w-10 h-10" />
                     </motion.div>
@@ -175,22 +489,44 @@ const Premium = () => {
                     </p>
                 </div>
 
+                {/* Payment Method Notice for Mobile */}
+                {isMobile && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-xl p-4 mb-6"
+                    >
+                        <div className="flex items-center gap-3">
+                            <FaMobileAlt className="text-xl" />
+                            <div>
+                                <p className="font-semibold">Mobile Payment Ready</p>
+                                <p className="text-sm opacity-90">Tap any plan to choose payment method</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+
                 {/* Pricing Cards */}
-                <div className="grid md:grid-cols-3 gap-8 mb-12">
+                <div className="grid md:grid-cols-3 gap-6 mb-12">
                     {pricingPlans.map((plan, index) => (
                         <motion.div
-                            key={index}
+                            key={plan.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 * index }}
-                            className={`bg-white dark:bg-gray-800 rounded-2xl p-8 border-2 ${
+                            className={`bg-white dark:bg-gray-800 rounded-2xl p-6 border-2 ${
                                 plan.highlight 
                                     ? 'border-amber-500 shadow-2xl relative' 
                                     : 'border-gray-200 dark:border-gray-700 shadow-lg'
-                            }`}
+                            } hover:shadow-xl transition-shadow duration-300`}
+                            onClick={() => {
+                                if (!plan.disabled && !processing) {
+                                    setSelectedPlan(plan.id);
+                                }
+                            }}
                         >
                             {plan.highlight && (
-                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white text-sm font-bold px-4 py-1 rounded-full">
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-sm font-bold px-4 py-1 rounded-full">
                                     {plan.saving}
                                 </div>
                             )}
@@ -198,7 +534,16 @@ const Premium = () => {
                             <div className="text-center mb-6">
                                 <div className="text-4xl mb-2">{plan.icon}</div>
                                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
-                                <div className="flex items-baseline justify-center mt-4">
+                                
+                                {plan.originalPrice && (
+                                    <div className="mt-2">
+                                        <span className="text-gray-500 dark:text-gray-400 line-through text-sm">
+                                            {plan.originalPrice}
+                                        </span>
+                                    </div>
+                                )}
+                                
+                                <div className="flex items-baseline justify-center mt-2">
                                     <span className="text-4xl font-bold text-gray-900 dark:text-white">{plan.price}</span>
                                     <span className="text-gray-600 dark:text-gray-400 ml-2">{plan.period}</span>
                                 </div>
@@ -218,28 +563,46 @@ const Premium = () => {
                             </ul>
                             
                             <button
-                                onClick={() => {
-                                    if (plan.name === "Monthly") handlePremiumPayment('monthly');
-                                    if (plan.name === "Yearly") handlePremiumPayment('yearly');
-                                    if (plan.name === "Free") navigate('/addIssues');
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (plan.id === 'monthly' || plan.id === 'yearly') {
+                                        handlePaymentMethod(plan.id);
+                                    }
                                 }}
-                                disabled={plan.disabled || loading}
-                                className={`w-full py-3 px-4 rounded-xl font-semibold transition-all ${
+                                disabled={plan.disabled || (processing && selectedPlan === plan.id)}
+                                className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                                     plan.highlight
-                                        ? 'bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white shadow-lg hover:shadow-xl'
+                                        ? `bg-gradient-to-r ${plan.color} hover:opacity-90 text-white shadow-lg hover:shadow-xl`
                                         : plan.name === "Free"
                                         ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-default'
-                                        : 'bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white'
-                                } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        : `bg-gradient-to-r ${plan.color} hover:opacity-90 text-white`
+                                } ${processing && selectedPlan === plan.id ? 'opacity-70 cursor-not-allowed' : ''}`}
                             >
-                                {loading && plan.highlight ? 'Processing...' : plan.buttonText}
+                                {processing && selectedPlan === plan.id ? (
+                                    <>
+                                        <FaSpinner className="animate-spin" />
+                                        {plan.buttonText}
+                                    </>
+                                ) : plan.buttonText}
                             </button>
+                            
+                            {/* Payment Icons */}
+                            {!plan.disabled && (
+                                <div className="mt-4 flex justify-center gap-2">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">Secure payment:</span>
+                                    <div className="flex gap-1">
+                                        <span className="text-xs">💳</span>
+                                        <span className="text-xs">📱</span>
+                                        <span className="text-xs">🏦</span>
+                                    </div>
+                                </div>
+                            )}
                         </motion.div>
                     ))}
                 </div>
 
                 {/* Feature Comparison */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 mb-12">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-12">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
                         Feature Comparison
                     </h2>
@@ -293,55 +656,75 @@ const Premium = () => {
                     <div className="grid md:grid-cols-2 gap-6">
                         {[
                             {
+                                q: "How do I pay on mobile?",
+                                a: "On mobile, tap any premium plan to choose payment method - Credit Card or Mobile Banking. We support bKash, Nagad, Rocket, and all major cards."
+                            },
+                            {
                                 q: "What happens after my 3 free issue reports?",
                                 a: "Once you reach the limit of 3 issues, you'll need to upgrade to Premium to report more issues. Your existing issues will remain active and visible."
                             },
                             {
                                 q: "Can I cancel my premium subscription?",
-                                a: "Yes, you can cancel anytime. Your premium features will remain active until the end of your billing period."
+                                a: "Yes, you can cancel anytime. Your premium features will remain active until the end of your billing period. No questions asked."
                             },
                             {
-                                q: "Will going premium guarantee faster issue resolution?",
-                                a: "While premium gives you priority visibility, actual resolution depends on government authorities. We ensure your issues get maximum attention."
-                            },
-                            {
-                                q: "Do I need to login to purchase premium?",
-                                a: "Yes, you need to be logged in to purchase premium. Your premium status will be linked to your account."
+                                q: "Is payment secure on mobile?",
+                                a: "Absolutely! We use Stripe for card payments and secure payment gateways for mobile banking. Your payment details are never stored on our servers."
                             }
                         ].map((faq, index) => (
-                            <div key={index} className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6">
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 * index }}
+                                className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6 hover:shadow-lg transition-shadow"
+                            >
                                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">{faq.q}</h3>
                                 <p className="text-gray-600 dark:text-gray-400">{faq.a}</p>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
 
                 {/* Final CTA */}
-                <div className="text-center">
-                    <div className="bg-linear-to-r from-amber-500 to-yellow-500 rounded-2xl p-8 mb-6">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center mb-8"
+                >
+                    <div className="bg-gradient-to-r from-amber-500 to-yellow-500 rounded-2xl p-8 mb-6">
                         <h3 className="text-2xl font-bold text-white mb-4">Ready to Make a Difference?</h3>
                         <p className="text-white/90 mb-6">Join thousands of premium users making their cities better</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <button
-                                onClick={() => handlePremiumPayment('monthly')}
-                                disabled={loading}
-                                className="px-8 py-3 bg-white text-amber-700 font-bold rounded-xl hover:bg-white/90 transition-colors"
+                                onClick={() => handlePaymentMethod('monthly')}
+                                disabled={processing}
+                                className="px-8 py-3 bg-white text-amber-700 font-bold rounded-xl hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
                             >
-                                {loading ? 'Processing...' : 'Get Premium Monthly'}
+                                {processing && selectedPlan === 'monthly' ? <FaSpinner className="animate-spin" /> : null}
+                                Get Premium Monthly
                             </button>
                             <button
-                                onClick={() => handlePremiumPayment('yearly')}
-                                disabled={loading}
-                                className="px-8 py-3 bg-black/20 text-white font-bold rounded-xl border border-white/30 hover:bg-white/10 transition-colors"
+                                onClick={() => handlePaymentMethod('yearly')}
+                                disabled={processing}
+                                className="px-8 py-3 bg-black/20 text-white font-bold rounded-xl border border-white/30 hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
                             >
-                                {loading ? 'Processing...' : 'Get Premium Yearly'}
+                                {processing && selectedPlan === 'yearly' ? <FaSpinner className="animate-spin" /> : null}
+                                Get Premium Yearly
                             </button>
                         </div>
                     </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                         Already premium? <button onClick={() => navigate('/dashboard')} className="text-amber-500 hover:text-amber-600">Go to Dashboard</button>
                     </p>
+                </motion.div>
+
+                {/* Security Notice */}
+                <div className="text-center">
+                    <div className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-full">
+                        <FaShieldAlt className="text-green-500" />
+                        <span>100% Secure Payment • SSL Encrypted • Money-Back Guarantee</span>
+                    </div>
                 </div>
             </div>
         </div>

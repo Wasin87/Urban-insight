@@ -130,7 +130,7 @@ const IssueDetails = () => {
                     >
                         <FaArrowLeft className="text-gray-600 dark:text-gray-400 group-hover:text-black-600 dark:group-hover:text-amber-400 transition" />
                         <span className="font-medium text-black dark:text-amber-300 group-hover:text-black dark:group-hover:text-amber-400 transition">
-                            Back to Issues
+                            Back
                         </span>
                     </button>
                     

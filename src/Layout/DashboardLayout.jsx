@@ -74,7 +74,7 @@ const DashboardLayout = () => {
   const navItems = [
     {
       to: "/dashboard",
-      icon: <RiDashboardFill className="text-lg" />,
+      icon: <RiDashboardFill className="text-lg " />,
       label: "Dashboard",
       end: true
     },
@@ -306,7 +306,7 @@ const DashboardLayout = () => {
                   <h2 className={`text-2xl font-bold bg-gradient-to-r ${theme === "night" ? "from-amber-300 to-amber-200" : "from-amber-700 to-amber-800"} bg-clip-text text-transparent`}>
                     Dashboard
                   </h2>
-                  <p className={`text-sm ${theme === "night" ? "text-gray-400" : "text-gray-600"}`}>Manage your workspace <span><MdKeyboardDoubleArrowDown /></span></p>
+                  <p className={`text-sm ${theme === "night" ? "text-gray-400" : "text-gray-600"}`}>Manage your workspace <span className='text-amber-800 text-2xl dark:text-amber-500 hover:scale-105 transition-transform duration-300 animate-bounce'><MdKeyboardDoubleArrowDown /></span></p>
                 </div>
               )}
 

@@ -32,7 +32,7 @@ const Coverage = () => {
     };
 
     return (
-        <div className="py-10 mt-8 bg-amber-100">
+        <div className="py-10 mt-8 bg-amber-100 dark:bg-gray-900 min-h-screen">
             {/* Title Section */}
             <div className="text-center mb-10 space-y-3">
                 <h2 className="text-5xl font-extrabold text-gray-800 dark:text-white">
@@ -48,7 +48,7 @@ const Coverage = () => {
             <div className="flex justify-center mb-8">
                 <form
                     onSubmit={handleSearch}
-                    className="w-full max-w-lg shadow-lg bg-white rounded-2xl px-5 py-3 flex items-center gap-3 border"
+                    className="w-full max-w-lg shadow-lg  bg-white dark:bg-gray-700 rounded-2xl px-5 py-3 flex items-center gap-3 border"
                 >
                     <svg
                         className="h-6 w-6 text-gray-400"
@@ -70,7 +70,7 @@ const Coverage = () => {
                     <input
                         type="search"
                         name="location"
-                        className="grow outline-none text-gray-700"
+                        className="grow outline-none text-gray-700 dark:text-gray-200 bg-transparent placeholder-gray-400"
                         placeholder="Search by district name..."
                     />
 

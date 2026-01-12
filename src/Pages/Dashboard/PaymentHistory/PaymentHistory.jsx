@@ -532,7 +532,7 @@ const PaymentHistory = () => {
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <FaSearch className="absolute left-17 top-149 md:left-35  md:top-98 transform -translate-y-1/2 text-gray-400" />
+                             
                         </div>
                     </div>
 
@@ -633,7 +633,7 @@ const PaymentHistory = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden w-70 md:w-full"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden w-80 md:w-full"
                 ref={tableRef}
             >
                 <div className="overflow-x-auto">
