@@ -154,7 +154,7 @@ const Footer = () => {
             
             {/* Newsletter Form */}
             <div className="mb-8">
-              <div className="flex gap-2">
+              <div className="flex flex-col  gap-2">
                 <input
                   type="email"
                   placeholder="Your email"
