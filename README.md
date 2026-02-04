@@ -9,7 +9,8 @@ The system provides intelligent issue categorization, priority boosting, automat
 ## Website Screenshot: 
 <img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/c3247915-2ce2-4eba-bc2e-fdfcc2d86a7a" />
 <img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/38004132-faef-440c-b3da-2384f8805c64" />
-<img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/52861f1c-94d3-4b0c-a3e4-82f86e98a625" />
+<img width="1902" height="885" alt="image" src="https://github.com/user-attachments/assets/3503cf8a-bfbb-4cc0-9aa4-3be38cab9840" />
+
 
  <img width="1900" height="800" alt="image" src="https://github.com/user-attachments/assets/77887913-13f9-4bbd-a52f-ade9e6022dba" />
 
