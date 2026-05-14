@@ -3,8 +3,8 @@ import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import banner1 from '../../../assets/banner/Blue and Green1.jpg';
 import banner2 from '../../../assets/banner/Blue and Green 2.jpg';
-import banner3 from '../../../assets/banner/Blue and Green 3.png';
-import banner4 from '../../../assets/banner/Blue and Green 4.png';
+import banner3 from '../../../assets/banner/Blue and Green 3.jpg';
+import banner4 from '../../../assets/banner/Blue and Green 4.jpg';
 import { Link } from 'react-router';
  
 import { MdKeyboardDoubleArrowDown } from 'react-icons/md';

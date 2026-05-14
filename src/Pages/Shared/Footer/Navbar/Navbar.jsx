@@ -418,7 +418,7 @@ const getUserRole = () => {
             : "bg-linear-to-r from-amber-50 to-amber-200 dark:from-gray-900 dark:to-gray-800 py-4"
         }`}
       >
-        <div className="px-4 sm:px-6 lg:px-5">
+        <div className="px-2 sm:px-6 lg:px-5">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <motion.div 
